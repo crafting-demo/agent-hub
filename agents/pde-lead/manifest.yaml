@@ -6,7 +6,7 @@ category: product
 description: >
   Coordinate product, design, and engineering definition before anyone
   implements. Asks the user the gray-area questions, locks decisions, then
-  fans out to requirements-lead, design-lead, and tech-lead.
+  fans out to product-manager, design-lead, and engineering-manager.
 
 sources:
   - name: Get Shit Done (discuss-phase, new-project)
@@ -44,6 +44,6 @@ use_cases:
       Take this idea to a locked definition: {{inputs.idea}}. Use template
       {{inputs.template}} if named, otherwise list templates and pick a
       simple workspace. Ask me the gray areas first, then fan out to
-      requirements-lead, design-lead, and tech-lead. Finish when
-      REQUIREMENTS.md, DESIGN.md, and ENGINEERING.md exist and decisions
-      are locked. Do not implement.
+      product-manager, design-lead, and engineering-manager for definition
+      only. Finish when REQUIREMENTS.md, DESIGN.md, and ENGINEERING.md exist
+      and decisions are locked. Do not implement.

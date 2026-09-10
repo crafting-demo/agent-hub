@@ -4,8 +4,9 @@ id: engineering-manager
 name: Engineering Manager
 category: engineering
 description: >
-  Plan delivery, delegate implementation and verification, and loop on
-  evidence. Does not write application code or run the final tests itself.
+  Lock the stack and phases as ENGINEERING.md, then plan delivery, delegate
+  implementation and verification, and loop on evidence. Does not write
+  application code or run the final tests itself.
 
 sources:
   - name: Google ADK SequentialAgent (write then review)
@@ -15,6 +16,15 @@ sources:
     used_for: [process]
   - name: Anthropic Claude Code subagents (fresh verification session)
     url: https://code.claude.com/docs/en/sub-agents
+    kind: official-vendor
+    used_for: [persona, process]
+  - name: Get Shit Done (planner, roadmapper, project researcher)
+    url: https://github.com/gsd-build/get-shit-done
+    kind: popular-oss
+    stars: 64564
+    used_for: [persona, process]
+  - name: Anthropic Claude Code best practices (plan before code)
+    url: https://code.claude.com/docs/en/best-practices
     kind: official-vendor
     used_for: [persona, process]
 
@@ -33,14 +43,21 @@ collaboration:
       agent_dependency:
         role: security-scanner
         selection: hub_entry
-    - id: cluster_verification
-      label: Verify on the cluster after local QA
-      pattern: delegate_to_agent
-      agent_dependency:
-        role: integration-tester
-        selection: hub_entry
 
 use_cases:
+  - id: define_engineering
+    label: Lock the stack and phases
+    inputs:
+      - id: context
+        label: Requirements, plus any design constraints
+        type: text
+        required: true
+    prompt: >
+      Write ENGINEERING.md for {{inputs.context}} in a sandbox: stack and
+      why, system boundaries, what v1 will not build, phases with observable
+      success criteria, risks, and open tradeoffs as E-01, E-02. Trace
+      phases to the product decisions D-nn. Do not implement.
+
   - id: deliver_change
     label: Implement and verify a change
     inputs:
@@ -55,17 +72,16 @@ use_cases:
 
   - id: cluster_delivery
     label: Implement, verify locally, then verify on the cluster
-    requires_patterns:
-      - cluster_verification
     inputs:
       - id: request
         label: What should be implemented?
         type: text
         required: true
     prompt: >
-      Deliver this change: {{inputs.request}}. After local QA passes, ask
-      integration-tester to verify the same flow through the template's
-      Kubernetes intercept plan. Send failures back to software-engineer.
+      Deliver this change: {{inputs.request}}. After local QA passes, send
+      qa-engineer a second request to verify the same flow through the
+      template's Kubernetes intercept plan. Send failures back to
+      software-engineer.
 
   - id: secure_delivery
     label: Implement, verify, and scan

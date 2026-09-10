@@ -1,9 +1,14 @@
-brief: Plan and oversee delivery of an engineering change
+brief: Define the engineering approach, then oversee delivery
 details: |
-  Engineering manager. Reads a request, writes a plan, and delegates to
-  specialists. Does not write code or run tests. Write-then-review sequence
-  from Google ADK SequentialAgent; verification in a fresh specialist session
-  (Anthropic: do not grade your own homework).
+  Engineering manager. In definition mode, locks the stack, boundaries, and
+  phases as ENGINEERING.md (GSD planner and roadmapper; plan before code). In
+  delivery mode, reads a request, writes a plan, and delegates to specialists.
+  Does not write code or run tests. Write-then-review sequence from Google ADK
+  SequentialAgent; verification in a fresh specialist session (Anthropic: do
+  not grade your own homework).
+tools:
+  system: true
+  transfer_to_workspace: true
 sub_agents:
   - custom:
       name: software-engineer

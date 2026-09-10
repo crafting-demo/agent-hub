@@ -4,8 +4,9 @@ id: qa-engineer
 name: QA Engineer
 category: engineering
 description: >
-  Verify a change in an existing sandbox against locally running services.
-  Drive the real user flow. Report pass or fail. Do not patch.
+  Verify a change in an existing sandbox, against locally running services or
+  through Crafting Kubernetes interception. Drive the real user flow. Report
+  pass, fail, or skipped. Do not patch.
 
 sources:
   - name: Anthropic Claude Code best practices (fresh-session verification)
@@ -17,6 +18,14 @@ sources:
     kind: popular-oss
     stars: 95925
     used_for: [tools, process]
+  - name: Crafting Kubernetes intercept plan
+    url: https://docs.sandboxes.cloud/guides/developers/kubernetes-intercept-plan.html
+    kind: official-vendor
+    used_for: [skills, process]
+  - name: Crafting Kubernetes development experience
+    url: https://docs.sandboxes.cloud/features/kubernetes-dev-experience.html
+    kind: official-vendor
+    used_for: [process]
 
 persona:
   instructions: ./instructions.md
@@ -26,6 +35,7 @@ runtime:
 
 skills:
   - path: ./skills/local-qa
+  - path: ./skills/cluster-verify
 
 use_cases:
   - id: verify_local
@@ -38,3 +48,16 @@ use_cases:
     prompt: >
       Verify locally: {{inputs.sandbox}}. Do not patch. Report pass or fail
       with evidence at each asserted step.
+
+  - id: verify_cluster
+    label: Verify a sandbox change through cluster intercept
+    inputs:
+      - id: scope
+        label: Sandbox, intercept plan, and what to assert
+        type: text
+        required: true
+    prompt: >
+      Verify through the cluster: {{inputs.scope}}. Start the template's
+      intercept plan, exercise the same flow local QA used through the
+      intercepted path, and report pass, fail, or skipped with evidence.
+      Do not patch. If there is no intercept plan, report skipped.

@@ -10,37 +10,33 @@ This repo is the source that Crafting's **Agents → Add Agent** flow reads. It 
 
 ## What is in the catalog
 
-### Product definition
+Twelve agents in four groups. One name, one job: where a role spans two phases or two environments, it is one agent with two modes rather than two near-duplicate entries.
 
-Use these before there is a spec. The output is decisions and artifacts, never an implementation.
+### Product and design
 
 | Agent | What it does | Tools it needs | Inspired by |
 | --- | --- | --- | --- |
-| **PDE Lead** (`pde-lead`) | Asks you the gray-area questions, locks the answers as numbered decisions, then fans out to the three specialists below. | Sub-agents: Requirements Lead, Design Lead, Tech Lead | [Get Shit Done](https://github.com/gsd-build/get-shit-done) discuss-phase, Anthropic [subagents](https://code.claude.com/docs/en/sub-agents) |
-| **Requirements Lead** (`requirements-lead`) | Writes `REQUIREMENTS.md`: problem, scope, non-goals, locked `D-nn` decisions, deferred ideas. | Crafting sandbox | Get Shit Done locked decisions; Anthropic product-management plugin |
+| **PDE Lead** (`pde-lead`) | Asks you the gray-area questions, locks the answers as numbered decisions, then fans out for the three definition artifacts. | Sub-agents: Product Manager, Design Lead, Engineering Manager | [Get Shit Done](https://github.com/gsd-build/get-shit-done) discuss-phase, Anthropic [subagents](https://code.claude.com/docs/en/sub-agents) |
+| **Product Manager** (`product-manager`) | Writes `REQUIREMENTS.md` and feature specs with locked `D-nn` decisions and deferred ideas; plans sprints and grooms the backlog once there is a board. Refuses to invent tickets or metrics. | Crafting sandbox. Ticket board: **Jira or Linear** (MCP), chosen at install, optional | Anthropic's [product-management plugin](https://github.com/anthropics/knowledge-work-plugins/tree/main/product-management); Get Shit Done locked decisions |
 | **Design Lead** (`design-lead`) | Commits to a visual thesis and writes `DESIGN.md`. Critiques its own draft against generic defaults. Builds no UI. | Crafting sandbox | Anthropic [frontend-design](https://github.com/anthropics/claude-code/tree/main/plugins/frontend-design), OpenAI [frontend-skill](https://developers.openai.com/blog/designing-delightful-frontends-with-gpt-5-4) |
-| **Tech Lead** (`tech-lead`) | Writes `ENGINEERING.md`: stack and why, boundaries, phases with success criteria, open `E-nn` tradeoffs. Does not build. | Crafting sandbox | Get Shit Done planner and roadmapper; Anthropic best practices |
 
-### Product and engineering
+### Engineering
 
 | Agent | What it does | Tools it needs | Inspired by |
 | --- | --- | --- | --- |
-| **Product Manager** (`product-manager`) | Writes feature specs, plans sprints, grooms the backlog. Refuses to invent tickets or metrics. | Ticket board: **Jira or Linear** (MCP), chosen at install | Anthropic's [product-management plugin](https://github.com/anthropics/knowledge-work-plugins/tree/main/product-management) |
-| **Engineering Manager** (`engineering-manager`) | Plans a change, delegates implementation and verification, loops on failures. Never writes code itself. | Sub-agents: Software Engineer, QA Engineer, optionally Security Scanner | Google ADK [SequentialAgent](https://github.com/google/adk-python) (write, then review), Anthropic [subagents](https://code.claude.com/docs/en/sub-agents) |
+| **Engineering Manager** (`engineering-manager`) | Writes `ENGINEERING.md` (stack and why, boundaries, phases, open `E-nn` tradeoffs) when asked to define; plans and delegates implementation and verification when asked to deliver. Never writes code itself. | Crafting sandbox. Sub-agents: Software Engineer, QA Engineer, optionally Security Scanner | Google ADK [SequentialAgent](https://github.com/google/adk-python) (write, then review), Anthropic [subagents](https://code.claude.com/docs/en/sub-agents), Get Shit Done planner and roadmapper |
 | **Software Engineer** (`software-engineer`) | Implements a specified change in a Crafting sandbox and reports what changed. Does not judge its own work. | Crafting sandbox | Anthropic [Claude Code best practices](https://code.claude.com/docs/en/best-practices), OpenAI [AGENTS.md](https://developers.openai.com/codex/guides/agents-md) |
-| **QA Engineer** (`qa-engineer`) | Verifies a change against running services in the sandbox, drives the real user flow, reports pass or fail. Does not patch. | Crafting sandbox, [Playwright](https://github.com/microsoft/playwright) for web UIs | Anthropic's "fresh session verifies" rule |
-| **Integration Tester** (`integration-tester`) | Verifies the same flow against the cluster through Kubernetes interception, once local QA passes. Reports skipped when there is no plan. | Crafting sandbox with a [Kubernetes intercept plan](https://docs.sandboxes.cloud/guides/developers/kubernetes-intercept-plan.html) | Crafting intercept docs; Anthropic fresh-session verification |
-| **Code Reviewer** (`code-reviewer`) | Read-only review of a diff for quality, correctness, and defensive security. One Critical / Suggestions / Good practices report. | Crafting sandbox with the diff | Anthropic [pr-review-toolkit](https://github.com/anthropics/claude-code), GitHub Copilot [review-code](https://docs.github.com/en/copilot/tutorials/customization-library/prompt-files/review-code), OWASP Top 10 |
+| **QA Engineer** (`qa-engineer`) | Drives the real user flow and reports pass or fail — against locally running services, or through Kubernetes interception when you ask for a cluster pass. Does not patch. | Crafting sandbox, [Playwright](https://github.com/microsoft/playwright) for web UIs, a [Kubernetes intercept plan](https://docs.sandboxes.cloud/guides/developers/kubernetes-intercept-plan.html) for the cluster pass | Anthropic's "fresh session verifies" rule; Crafting intercept docs |
+| **Code Reviewer** (`code-reviewer`) | Read-only review of a diff for quality, correctness, and defensive security, mapped to OWASP and CWE. One Critical / Suggestions / Good practices report. No exploits, no patches. | Crafting sandbox with the diff | Anthropic [pr-review-toolkit](https://github.com/anthropics/claude-code) and [subagents](https://code.claude.com/docs/en/sub-agents), GitHub Copilot [review-code](https://docs.github.com/en/copilot/tutorials/customization-library/prompt-files/review-code), OWASP Top 10, CWE |
 
 ### Security and operations
 
 | Agent | What it does | Tools it needs | Inspired by |
 | --- | --- | --- | --- |
 | **Security Scanner** (`security-scanner`) | Scans a running URL for web vulnerabilities and reports findings by severity, as feedback for a coding loop. No exploits. | **CLI**: [lonkero](https://github.com/bountyyfi/lonkero), installed automatically in the agent's sandbox | Crafting's demo-org `webscan` agent; OWASP Top 10 |
-| **Security Reviewer** (`security-reviewer`) | Read-only security review of a diff: secrets, injection, authz, insecure defaults, mapped to OWASP and CWE. No exploits, no patches. | Crafting sandbox with the diff | Anthropic [subagents](https://code.claude.com/docs/en/sub-agents) security-reviewer, pr-review-toolkit, OWASP Top 10, CWE |
 | **Incident Commander** (`incident-commander`) | Reproduces a symptom in a sandbox, optionally compares through cluster intercept, writes a diagnosis. Does not fix. | Crafting sandbox, `cs k8s intercept` when a plan exists | Anthropic reviewer contract ("report, do not edit") |
 
-Three agents touch security from different angles: `security-scanner` probes a running URL, `security-reviewer` reads a diff, and `code-reviewer` folds security into one merged review with quality and correctness.
+Two agents touch security, and they read different things: `security-scanner` probes a running URL with a CLI, while `code-reviewer` reads a diff and folds security into one review with quality and correctness. Ask Code Reviewer for a security-only review when you want that lens alone.
 
 ### Legal
 
@@ -58,8 +54,9 @@ All legal output is a draft for attorney review. These agents assist with legal 
 
 Single agents are the default. Some are designed to run as a team:
 
-- **Idea to locked definition.** PDE Lead asks the hard questions, then Requirements Lead, Design Lead, and Tech Lead write the three artifacts. Delivery is a separate Engineering Manager session on the same sandbox.
+- **Idea to locked definition.** PDE Lead asks the hard questions, then Product Manager, Design Lead, and Engineering Manager write the three artifacts. Delivery is a separate Engineering Manager session on the same sandbox.
 - **Secure delivery.** Engineering Manager asks Software Engineer to implement, QA Engineer to verify, then Security Scanner to scan the endpoints. Findings go back to the engineer until clean.
+- **Cluster verification.** After a local pass, Engineering Manager sends QA Engineer a second, separate request to drive the same flow through the template's Kubernetes intercept plan, so a fresh session grades it.
 - **Vendor contract review.** Legal Counsel sends the same agreement to Contract Analyst and Compliance Reviewer, then merges one memo.
 - **Backlog to reviewed change.** Product Manager writes the spec from the ticket board, Engineering Manager delivers it, Code Reviewer gates the diff.
 

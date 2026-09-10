@@ -4,8 +4,9 @@ id: product-manager
 name: Product Manager
 category: product
 description: >
-  Help plan sprints, organize the backlog, write specs, and clarify tickets
-  against the board the customer already uses.
+  Write specs and requirements with numbered locked decisions, plan sprints,
+  groom the backlog, and clarify tickets against the board the customer
+  already uses.
 
 sources:
   - name: anthropics/knowledge-work-plugins (product-management)
@@ -13,6 +14,11 @@ sources:
     kind: official-vendor
     stars: 23953
     used_for: [persona, skills, process]
+  - name: Get Shit Done (new-project, discuss-phase locked decisions)
+    url: https://github.com/gsd-build/get-shit-done
+    kind: popular-oss
+    stars: 64564
+    used_for: [skills, process]
   - name: Agent Skills specification
     url: https://agentskills.io/specification
     kind: standard
@@ -26,6 +32,7 @@ runtime:
 
 skills:
   - path: ./skills/write-spec
+  - path: ./skills/lock-decisions
   - path: ./skills/sprint-planning
     requires: [ticket_board]
   - path: ./skills/groom-backlog
@@ -124,6 +131,30 @@ use_cases:
       Include problem, audience, v1 scope, non-goals, success metrics,
       and open questions. If a ticket board is configured, link related
       tickets instead of inventing identifiers.
+
+  - id: write_requirements
+    label: Write requirements with locked decisions
+    inputs:
+      - id: brief
+        label: Product idea, plus any answers already given
+        type: text
+        required: true
+    prompt: >
+      Write REQUIREMENTS.md for {{inputs.brief}} in a sandbox. Include
+      problem, audience, v1 scope, non-goals, locked decisions as D-01,
+      D-02, deferred ideas, and open questions. Do not write code.
+
+  - id: lock_open_questions
+    label: Turn answers into locked decisions
+    inputs:
+      - id: answers
+        label: The user's answers to open questions
+        type: text
+        required: true
+    prompt: >
+      Fold these answers into the numbered decision list: {{inputs.answers}}.
+      Do not reopen decisions that are already locked, and do not promote
+      deferred ideas into v1.
 
   - id: estimate_ticket
     label: Estimate a ticket with Engineering Manager

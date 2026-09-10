@@ -9,7 +9,8 @@ agents:
   category: engineering
   path: agents/code-reviewer
   description: Read-only review of an existing diff for quality, correctness, and defensive
-    security. Publishes one Critical / Suggestions / Good practices review. Does not patch.
+    security, with findings mapped to OWASP Top 10 and CWE. Publishes one Critical / Suggestions
+    / Good practices review. Writes no exploits and does not patch.
 - id: compliance-reviewer
   name: Compliance Reviewer
   category: legal
@@ -33,21 +34,15 @@ agents:
   name: Engineering Manager
   category: engineering
   path: agents/engineering-manager
-  description: Plan delivery, delegate implementation and verification, and loop on evidence.
-    Does not write application code or run the final tests itself.
+  description: Lock the stack and phases as ENGINEERING.md, then plan delivery, delegate implementation
+    and verification, and loop on evidence. Does not write application code or run the final
+    tests itself.
 - id: incident-commander
   name: Incident Commander
   category: operations
   path: agents/incident-commander
   description: Diagnose an incident without changing code. Reproduce locally, optionally compare
     via cluster intercept, and write a diagnosis plus next step.
-- id: integration-tester
-  name: Integration Tester
-  category: engineering
-  path: agents/integration-tester
-  description: Verify a locally passing change against the cluster through Crafting Kubernetes
-    interception. Reports pass, fail, or skipped. Does not patch, and does not invent an intercept
-    plan.
 - id: legal-counsel
   name: Legal Counsel
   category: legal
@@ -59,34 +54,21 @@ agents:
   category: product
   path: agents/pde-lead
   description: Coordinate product, design, and engineering definition before anyone implements.
-    Asks the user the gray-area questions, locks decisions, then fans out to requirements-lead,
-    design-lead, and tech-lead.
+    Asks the user the gray-area questions, locks decisions, then fans out to product-manager,
+    design-lead, and engineering-manager.
 - id: product-manager
   name: Product Manager
   category: product
   path: agents/product-manager
-  description: Help plan sprints, organize the backlog, write specs, and clarify tickets against
-    the board the customer already uses.
+  description: Write specs and requirements with numbered locked decisions, plan sprints,
+    groom the backlog, and clarify tickets against the board the customer already uses.
 - id: qa-engineer
   name: QA Engineer
   category: engineering
   path: agents/qa-engineer
-  description: Verify a change in an existing sandbox against locally running services. Drive
-    the real user flow. Report pass or fail. Do not patch.
-- id: requirements-lead
-  name: Requirements Lead
-  category: product
-  path: agents/requirements-lead
-  description: Turn a product brief and the user's answers into REQUIREMENTS.md with numbered
-    locked decisions and deferred ideas. Definition phase only; does not implement or groom
-    a live backlog.
-- id: security-reviewer
-  name: Security Reviewer
-  category: security
-  path: agents/security-reviewer
-  description: 'Read-only defensive security review of a diff: secrets, injection, authentication
-    and authorization, insecure defaults. Maps findings to OWASP Top 10 and CWE. Writes no
-    exploits and does not patch.'
+  description: Verify a change in an existing sandbox, against locally running services or
+    through Crafting Kubernetes interception. Drive the real user flow. Report pass, fail,
+    or skipped. Do not patch.
 - id: security-scanner
   name: Security Scanner
   category: security
@@ -99,10 +81,3 @@ agents:
   path: agents/software-engineer
   description: Implement a specified change inside a Crafting sandbox and report what changed.
     Does not own the final QA verdict.
-- id: tech-lead
-  name: Tech Lead
-  category: engineering
-  path: agents/tech-lead
-  description: 'Lock engineering decisions before implementation: stack, boundaries, phases
-    with observable success criteria, and open tradeoffs. Writes ENGINEERING.md. Does not
-    build the product.'

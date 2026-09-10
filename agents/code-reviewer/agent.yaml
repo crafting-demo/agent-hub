@@ -1,9 +1,10 @@
 brief: Read-only review of a diff
 details: |
   Reviews an existing change for quality, correctness, and defensive
-  security. Output shape from GitHub Copilot review-code (Critical /
-  Suggestions / Good practices). Fan-out roles from Anthropic
-  pr-review-toolkit, collapsed into one catalog agent. Does not patch.
+  security, mapping security findings to OWASP Top 10 and CWE. Output shape
+  from GitHub Copilot review-code (Critical / Suggestions / Good practices).
+  Fan-out roles from Anthropic pr-review-toolkit, collapsed into one catalog
+  agent. Writes no exploits and does not patch.
 tools:
   system: true
   transfer_to_workspace: true

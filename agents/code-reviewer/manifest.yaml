@@ -5,8 +5,9 @@ name: Code Reviewer
 category: engineering
 description: >
   Read-only review of an existing diff for quality, correctness, and
-  defensive security. Publishes one Critical / Suggestions / Good practices
-  review. Does not patch.
+  defensive security, with findings mapped to OWASP Top 10 and CWE. Publishes
+  one Critical / Suggestions / Good practices review. Writes no exploits and
+  does not patch.
 
 sources:
   - name: Anthropic Claude Code pr-review-toolkit / code-review plugins
@@ -18,8 +19,16 @@ sources:
     url: https://docs.github.com/en/copilot/tutorials/customization-library/prompt-files/review-code
     kind: official-vendor
     used_for: [process]
+  - name: Anthropic Claude Code subagents (read-only security-reviewer contract)
+    url: https://code.claude.com/docs/en/sub-agents
+    kind: official-vendor
+    used_for: [persona, process]
   - name: OWASP Top 10
     url: https://owasp.org/www-project-top-ten/
+    kind: standard
+    used_for: [process]
+  - name: CWE
+    url: https://cwe.mitre.org/
     kind: standard
     used_for: [process]
   - name: OpenAI Codex AGENTS.md
@@ -48,3 +57,18 @@ use_cases:
       Review this change (read-only): {{inputs.scope}}. Cover quality,
       correctness, and defensive security. Merge into Critical /
       Suggestions / Good practices. Do not patch.
+
+  - id: review_diff_security
+    label: Security-review a diff
+    inputs:
+      - id: scope
+        label: Sandbox, workspace, and how to get the diff
+        type: text
+        required: true
+    prompt: >
+      Security-review this change (read-only): {{inputs.scope}}. Focus the
+      review on secrets, injection, authn/authz on changed endpoints,
+      insecure defaults, and dependency or config changes that widen the
+      attack surface. Map to OWASP Top 10 / CWE where it applies. Report
+      Critical / Suggestions / Good practices with remediation hints, not
+      exploits. Do not patch.

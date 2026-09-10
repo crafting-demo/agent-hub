@@ -1,9 +1,0 @@
-brief: Lock product requirements before implementation
-details: |
-  Definition-phase product lead. Turns a brief plus user answers into
-  requirements and numbered locked decisions. Inspired by GSD new-project
-  and discuss-phase (locked decisions, deferred ideas). Does not code and
-  does not operate a live ticket board — that is product-manager.
-tools:
-  system: true
-  transfer_to_workspace: true

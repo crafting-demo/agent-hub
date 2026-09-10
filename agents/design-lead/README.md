@@ -1,7 +1,7 @@
 # Design Lead
 
 Definition-phase design specialist. Usually invoked by `pde-lead`, alongside
-`requirements-lead` and `tech-lead`. Output is `DESIGN.md`, not an
+`product-manager` and `engineering-manager`. Output is `DESIGN.md`, not an
 implementation.
 
 ## Sources

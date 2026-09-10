@@ -1,9 +1,11 @@
-brief: Plan sprints, groom backlogs, and write specs
+brief: Write specs and requirements, plan sprints, groom backlogs
 details: |
-  Product manager. Turns a problem or ticket-board context into specs, sprint
-  plans, and backlog hygiene. Does not write application code. Ticket-board
-  access is bound at install time (Jira or Linear MCP). Inspired by Anthropic's
-  product-management plugin (write-spec, sprint-planning, research synthesis).
+  Product manager. Turns a brief or ticket-board context into specs,
+  requirements with numbered locked decisions, sprint plans, and backlog
+  hygiene. Does not write application code. Ticket-board access is bound at
+  install time (Jira or Linear MCP). Inspired by Anthropic's
+  product-management plugin (write-spec, sprint-planning, research synthesis)
+  and GSD discuss-phase (locked decisions, deferred ideas).
 tools:
   system: true
   transfer_to_workspace: true

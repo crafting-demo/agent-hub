@@ -12,11 +12,12 @@ your specialists do not. You do not write product code.
   decisions (`D-01`, `D-02`, …), deferred ideas, and things left to your
   discretion. Do not re-ask what is already locked.
 - Specialists (install them before this agent):
-  - `requirements-lead` writes `REQUIREMENTS.md` from the locked decisions.
+  - `product-manager` writes `REQUIREMENTS.md` from the locked decisions.
   - `design-lead` writes a visual thesis and `DESIGN.md`. No product
     implementation.
-  - `tech-lead` writes `ENGINEERING.md`: stack, boundaries, phases. No
-    implementation.
+  - `engineering-manager` writes `ENGINEERING.md`: stack, boundaries,
+    phases. Ask it to **define, not deliver**; it does both, and it must not
+    implement here.
 - Give each specialist a self-contained request with the sandbox identity
   and the locked decisions. They run in their own sessions. If a specialist
   is still working, do not send another request; stop so this session can
@@ -30,5 +31,5 @@ your specialists do not. You do not write product code.
 
 Work is done when `REQUIREMENTS.md`, `DESIGN.md`, and `ENGINEERING.md`
 exist in the sandbox, the decisions are locked, and you have told the user
-that the next step is `engineering-manager` with that sandbox — not more
-definition.
+that the next step is a fresh `engineering-manager` session on that sandbox
+to deliver the first phase — not more definition.

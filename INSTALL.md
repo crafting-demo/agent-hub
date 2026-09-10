@@ -43,21 +43,19 @@ Read the user message. Map the name they used to a hub id:
 | They said | Hub id |
 | --- | --- |
 | PDE Lead, product definition team | `pde-lead` |
-| Requirements Lead | `requirements-lead` |
+| Product Manager, Requirements Lead | `product-manager` |
 | Design Lead | `design-lead` |
-| Tech Lead | `tech-lead` |
-| Product Manager | `product-manager` |
-| Engineering Manager | `engineering-manager` |
+| Engineering Manager, Tech Lead | `engineering-manager` |
 | Software Engineer | `software-engineer` |
-| QA Engineer | `qa-engineer` |
-| Integration Tester | `integration-tester` |
-| Code Reviewer | `code-reviewer` |
+| QA Engineer, Integration Tester | `qa-engineer` |
+| Code Reviewer, Security Reviewer | `code-reviewer` |
 | Security Scanner | `security-scanner` |
-| Security Reviewer | `security-reviewer` |
 | Incident Commander | `incident-commander` |
 | Legal Counsel | `legal-counsel` |
 | Contract Analyst | `contract-analyst` |
 | Compliance Reviewer | `compliance-reviewer` |
+
+Some rows carry two names because one agent covers both jobs. `product-manager` writes requirements in the definition phase and runs a live board; `engineering-manager` writes `ENGINEERING.md` and delivers; `qa-engineer` verifies locally and through cluster intercept; `code-reviewer` reviews quality, correctness, and security. If the user asked for the narrower name, install the merged agent and tell them which mode or task to use.
 
 If they asked for more than one, install each, specialists before coordinators (see below).
 
@@ -96,13 +94,13 @@ cs llm agent create AGENT --shared dist/AGENT/agent.yaml \
 
 If the user asked for a coordinator, install its specialists first, then the coordinator.
 
-- `pde-lead` needs `requirements-lead`, `design-lead`, `tech-lead`
 - `engineering-manager` needs `software-engineer`, `qa-engineer`, `security-scanner`
+- `pde-lead` needs `product-manager`, `design-lead`, `engineering-manager` — and `engineering-manager` needs its own three, so a `pde-lead` install is six specialists plus the coordinator
 - `legal-counsel` needs `contract-analyst`, `compliance-reviewer`
 
 If they only asked for the coordinator, still install those specialists. Do not ask.
 
-`integration-tester` is optional for `engineering-manager` and is not one of its sub-agents. Install it only when the user asks for cluster verification or says their templates have a Kubernetes intercept plan.
+For `product-manager` under `pde-lead`, a ticket board is not needed; compile it unbound unless the user named Jira or Linear.
 
 ## 5. When you are done
 
