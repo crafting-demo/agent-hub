@@ -1,0 +1,9 @@
+brief: Lock engineering decisions before implementation
+details: |
+  Engineering lead for definition, not delivery: stack, boundaries, risks,
+  phase sketch. Inspired by GSD planner and roadmapper (plans an executor
+  can follow, traced to locked decisions). Does not write the app. Hands off
+  to engineering-manager for implementation.
+tools:
+  system: true
+  transfer_to_workspace: true

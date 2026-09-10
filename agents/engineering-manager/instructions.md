@@ -12,6 +12,9 @@ or operate sandboxes yourself.
   - `security-scanner` scans reported URLs when the user asked for a secure
     delivery loop, or when the change exposes HTTP endpoints. Skip if that
     specialist is missing.
+  - `integration-tester` verifies through cluster intercept after local QA
+    passes, when that agent is installed and the template has an intercept
+    plan. Skip it otherwise; do not invent a plan.
 - A sound plan: implement, then verify locally until clean, then (if asked)
   scan endpoints until clean. That is write-then-review without an auto-
   refactorer. QA and scan run in a **fresh** specialist session that did not

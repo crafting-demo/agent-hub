@@ -42,12 +42,18 @@ Read the user message. Map the name they used to a hub id:
 
 | They said | Hub id |
 | --- | --- |
+| PDE Lead, product definition team | `pde-lead` |
+| Requirements Lead | `requirements-lead` |
+| Design Lead | `design-lead` |
+| Tech Lead | `tech-lead` |
 | Product Manager | `product-manager` |
 | Engineering Manager | `engineering-manager` |
 | Software Engineer | `software-engineer` |
 | QA Engineer | `qa-engineer` |
+| Integration Tester | `integration-tester` |
 | Code Reviewer | `code-reviewer` |
 | Security Scanner | `security-scanner` |
+| Security Reviewer | `security-reviewer` |
 | Incident Commander | `incident-commander` |
 | Legal Counsel | `legal-counsel` |
 | Contract Analyst | `contract-analyst` |
@@ -90,10 +96,13 @@ cs llm agent create AGENT --shared dist/AGENT/agent.yaml \
 
 If the user asked for a coordinator, install its specialists first, then the coordinator.
 
+- `pde-lead` needs `requirements-lead`, `design-lead`, `tech-lead`
 - `engineering-manager` needs `software-engineer`, `qa-engineer`, `security-scanner`
 - `legal-counsel` needs `contract-analyst`, `compliance-reviewer`
 
 If they only asked for the coordinator, still install those specialists. Do not ask.
+
+`integration-tester` is optional for `engineering-manager` and is not one of its sub-agents. Install it only when the user asks for cluster verification or says their templates have a Kubernetes intercept plan.
 
 ## 5. When you are done
 

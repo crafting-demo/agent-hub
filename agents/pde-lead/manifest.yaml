@@ -1,0 +1,49 @@
+schema_version: "0.1"
+
+id: pde-lead
+name: PDE Lead
+category: product
+description: >
+  Coordinate product, design, and engineering definition before anyone
+  implements. Asks the user the gray-area questions, locks decisions, then
+  fans out to requirements-lead, design-lead, and tech-lead.
+
+sources:
+  - name: Get Shit Done (discuss-phase, new-project)
+    url: https://github.com/gsd-build/get-shit-done
+    kind: popular-oss
+    stars: 64564
+    used_for: [persona, process]
+  - name: Anthropic Claude Code subagents (isolated specialist sessions)
+    url: https://code.claude.com/docs/en/sub-agents
+    kind: official-vendor
+    used_for: [persona, process]
+
+persona:
+  instructions: ./instructions.md
+
+runtime:
+  agent: ./agent.yaml
+
+collaboration:
+  default_pattern: coordinator
+
+use_cases:
+  - id: define_product
+    label: Take an idea to locked definition
+    inputs:
+      - id: idea
+        label: What do you want to build?
+        type: text
+        required: true
+      - id: template
+        label: Sandbox template to write the artifacts in (optional)
+        type: string
+        required: false
+    prompt: >
+      Take this idea to a locked definition: {{inputs.idea}}. Use template
+      {{inputs.template}} if named, otherwise list templates and pick a
+      simple workspace. Ask me the gray areas first, then fan out to
+      requirements-lead, design-lead, and tech-lead. Finish when
+      REQUIREMENTS.md, DESIGN.md, and ENGINEERING.md exist and decisions
+      are locked. Do not implement.

@@ -1,0 +1,59 @@
+schema_version: "0.1"
+
+id: design-lead
+name: Design Lead
+category: design
+description: >
+  Commit to a visual direction and write DESIGN.md before anyone builds UI.
+  Two-pass: draft a thesis, then critique it against generic defaults. Does
+  not implement product features.
+
+sources:
+  - name: Anthropic Claude Code frontend-design plugin
+    url: https://github.com/anthropics/claude-code/tree/main/plugins/frontend-design
+    kind: popular-oss
+    stars: 144649
+    used_for: [persona, skills, process]
+  - name: OpenAI frontend-skill (Designing delightful frontends)
+    url: https://developers.openai.com/blog/designing-delightful-frontends-with-gpt-5-4
+    kind: official-vendor
+    used_for: [persona, process]
+  - name: openai/skills
+    url: https://github.com/openai/skills
+    kind: popular-oss
+    stars: 26846
+    used_for: [process]
+
+persona:
+  instructions: ./instructions.md
+
+runtime:
+  agent: ./agent.yaml
+
+skills:
+  - path: ./skills/design-brief
+
+use_cases:
+  - id: lock_direction
+    label: Lock a visual direction
+    inputs:
+      - id: brief
+        label: What are we designing, and for whom?
+        type: text
+        required: true
+    prompt: >
+      Lock a visual direction for {{inputs.brief}} and write DESIGN.md in a
+      sandbox. Commit to a thesis first, then critique it against generic
+      defaults. Do not implement product features.
+
+  - id: critique_direction
+    label: Critique an existing design direction
+    inputs:
+      - id: direction
+        label: The current palette, type, and layout
+        type: text
+        required: true
+    prompt: >
+      Critique this direction: {{inputs.direction}}. Say what it shares with
+      every other product in its category and what one change would make it
+      specific. Do not rewrite the application.

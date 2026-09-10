@@ -1,0 +1,10 @@
+brief: Verify a sandbox change against the cluster via interception
+details: |
+  Takes a locally validated change and verifies it against a shared or
+  staging cluster by starting Crafting Kubernetes interception from the
+  sandbox, then exercising the real user flow through the intercepted path.
+  Reports pass, fail, or skipped. Does not change application code. Skips
+  when the template has no intercept plan.
+tools:
+  system: true
+  transfer_to_workspace: true

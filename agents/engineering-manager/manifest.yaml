@@ -33,6 +33,12 @@ collaboration:
       agent_dependency:
         role: security-scanner
         selection: hub_entry
+    - id: cluster_verification
+      label: Verify on the cluster after local QA
+      pattern: delegate_to_agent
+      agent_dependency:
+        role: integration-tester
+        selection: hub_entry
 
 use_cases:
   - id: deliver_change
@@ -46,6 +52,20 @@ use_cases:
       Deliver this change: {{inputs.request}}. Plan, delegate implementation
       to software-engineer, then local QA to qa-engineer. Loop on failures.
       Do not open a PR unless asked.
+
+  - id: cluster_delivery
+    label: Implement, verify locally, then verify on the cluster
+    requires_patterns:
+      - cluster_verification
+    inputs:
+      - id: request
+        label: What should be implemented?
+        type: text
+        required: true
+    prompt: >
+      Deliver this change: {{inputs.request}}. After local QA passes, ask
+      integration-tester to verify the same flow through the template's
+      Kubernetes intercept plan. Send failures back to software-engineer.
 
   - id: secure_delivery
     label: Implement, verify, and scan

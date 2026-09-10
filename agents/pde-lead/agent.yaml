@@ -1,0 +1,14 @@
+brief: Coordinate product, design, and engineering before anyone codes
+details: |
+  Product-design-engineering lead. Talks to the user, locks decisions, then
+  fans work out to requirements-lead, design-lead, and tech-lead. Does not
+  implement. Inspired by GSD discuss-phase and new-project (ask gray areas,
+  lock numbered decisions) plus design-before-build from Anthropic and
+  OpenAI.
+sub_agents:
+  - custom:
+      name: requirements-lead
+  - custom:
+      name: design-lead
+  - custom:
+      name: tech-lead

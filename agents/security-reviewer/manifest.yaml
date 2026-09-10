@@ -1,0 +1,52 @@
+schema_version: "0.1"
+
+id: security-reviewer
+name: Security Reviewer
+category: security
+description: >
+  Read-only defensive security review of a diff: secrets, injection,
+  authentication and authorization, insecure defaults. Maps findings to
+  OWASP Top 10 and CWE. Writes no exploits and does not patch.
+
+sources:
+  - name: Anthropic Claude Code subagents (security-reviewer contract)
+    url: https://code.claude.com/docs/en/sub-agents
+    kind: official-vendor
+    used_for: [persona, process]
+  - name: anthropics/claude-code pr-review-toolkit
+    url: https://github.com/anthropics/claude-code
+    kind: popular-oss
+    stars: 144649
+    used_for: [persona, process]
+  - name: OWASP Top 10
+    url: https://owasp.org/www-project-top-ten/
+    kind: standard
+    used_for: [process]
+  - name: CWE
+    url: https://cwe.mitre.org/
+    kind: standard
+    used_for: [process]
+
+persona:
+  instructions: ./instructions.md
+
+runtime:
+  agent: ./agent.yaml
+
+skills:
+  - path: ./skills/security-review
+
+use_cases:
+  - id: review_diff_security
+    label: Security-review a diff
+    inputs:
+      - id: scope
+        label: Sandbox, workspace, and how to get the diff
+        type: text
+        required: true
+    prompt: >
+      Security-review this change (read-only): {{inputs.scope}}. Check
+      secrets, injection, authn/authz on changed endpoints, and insecure
+      defaults. Map to OWASP Top 10 / CWE where it applies. Report
+      Critical / Suggestions / Good practices with remediation hints, not
+      exploits. Do not patch.

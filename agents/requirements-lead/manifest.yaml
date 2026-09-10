@@ -1,0 +1,55 @@
+schema_version: "0.1"
+
+id: requirements-lead
+name: Requirements Lead
+category: product
+description: >
+  Turn a product brief and the user's answers into REQUIREMENTS.md with
+  numbered locked decisions and deferred ideas. Definition phase only; does
+  not implement or groom a live backlog.
+
+sources:
+  - name: Get Shit Done (new-project, discuss-phase locked decisions)
+    url: https://github.com/gsd-build/get-shit-done
+    kind: popular-oss
+    stars: 64564
+    used_for: [persona, skills, process]
+  - name: anthropics/knowledge-work-plugins (product-management)
+    url: https://github.com/anthropics/knowledge-work-plugins/tree/main/product-management
+    kind: official-vendor
+    stars: 23953
+    used_for: [process]
+
+persona:
+  instructions: ./instructions.md
+
+runtime:
+  agent: ./agent.yaml
+
+skills:
+  - path: ./skills/lock-decisions
+
+use_cases:
+  - id: write_requirements
+    label: Write requirements with locked decisions
+    inputs:
+      - id: brief
+        label: Product idea, plus any answers already given
+        type: text
+        required: true
+    prompt: >
+      Write REQUIREMENTS.md for {{inputs.brief}} in a sandbox. Include
+      problem, audience, v1 scope, non-goals, locked decisions as D-01,
+      D-02, deferred ideas, and open questions. Do not write code.
+
+  - id: lock_open_questions
+    label: Turn answers into locked decisions
+    inputs:
+      - id: answers
+        label: The user's answers to open questions
+        type: text
+        required: true
+    prompt: >
+      Fold these answers into the numbered decision list: {{inputs.answers}}.
+      Do not reopen decisions that are already locked, and do not promote
+      deferred ideas into v1.
