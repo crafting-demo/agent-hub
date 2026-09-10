@@ -16,7 +16,7 @@ Authority bar: official vendor, published standard, or GitHub ≥ 10,000 stars.
 | security-scanner | Crafting webscan CLI-in-template; OWASP Top 10 |
 | incident-commander | Anthropic reviewer contract (report, do not edit); Google ADK sequential |
 | legal-counsel | [knowledge-work-plugins legal](https://github.com/anthropics/knowledge-work-plugins/tree/main/legal); [claude-for-legal](https://github.com/anthropics/claude-for-legal) (draft for attorney review) |
-| contract-analyst | same legal plugin, `/review-contract` process |
-| compliance-reviewer | same legal plugin, `/compliance-check` process |
+| contract-analyst | same legal plugin, `/review-contract` process; [jgm/pandoc](https://github.com/jgm/pandoc) (46k) as the document-conversion tool |
+| compliance-reviewer | same legal plugin, `/compliance-check` process; [jgm/pandoc](https://github.com/jgm/pandoc) (46k) as the document-conversion tool |
 
 Star counts were recorded at authoring time (2026-09-10) and are snapshots.

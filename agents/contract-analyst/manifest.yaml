@@ -13,6 +13,11 @@ sources:
     kind: official-vendor
     stars: 23953
     used_for: [persona, skills, process]
+  - name: jgm/pandoc
+    url: https://github.com/jgm/pandoc
+    kind: popular-oss
+    stars: 46220
+    used_for: [tools]
 
 persona:
   instructions: ./instructions.md
@@ -23,12 +28,34 @@ runtime:
 skills:
   - path: ./skills/contract-review
 
+capabilities:
+  document_converter:
+    label: Document converter CLI
+    description: >
+      Contracts arrive as Word files. Converts .docx, .odt, and .rtf to text
+      the agent can review, and writes memos or redlines back to .docx.
+      Planted in the agent's exec sandbox.
+    required: true
+    kind_hint: cli
+    operations:
+      - to_markdown
+      - to_docx
+    providers:
+      - id: pandoc
+        label: Pandoc
+        kind: cli
+        tool: ./tools/pandoc
+    verification:
+      - cli_executable
+
 use_cases:
   - id: review_contract
     label: Review a contract against a playbook
+    requires:
+      - document_converter
     inputs:
       - id: contract
-        label: Contract text or path
+        label: Contract file (.docx) or pasted text
         type: text
         required: true
     prompt: >

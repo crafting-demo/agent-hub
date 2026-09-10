@@ -1,0 +1,36 @@
+id: pandoc
+label: Pandoc document converter
+description: >
+  Contracts arrive as Word files, not text. Pandoc converts .docx, .odt, .rtf,
+  and HTML to Markdown the agent can read, and writes memos or redlines back to
+  .docx for attorney review. Statically linked release binary from jgm/pandoc.
+
+install:
+  checkout_path: legal
+  cmd: |
+    [[ -x ./bin/pandoc ]] || {
+      mkdir -p bin
+      curl -sSfL https://github.com/jgm/pandoc/releases/download/3.10.2/pandoc-3.10.2-linux-amd64.tar.gz \
+        | tar -zx --strip-components 2 -C bin pandoc-3.10.2/bin/pandoc
+    }
+
+wrappers:
+  - dest: ~/legal/doc2md.sh
+    mode: "0755"
+    source: ./doc2md.sh
+  - dest: ~/legal/md2docx.sh
+    mode: "0755"
+    source: ./md2docx.sh
+  - dest: ~/legal/AGENTS.md
+    mode: "0644"
+    content: |
+      Contracts arrive as Word files. Convert before reading:
+
+        ./doc2md.sh CONTRACT.docx              print the contract as Markdown
+        ./doc2md.sh CONTRACT.docx contract.md  write Markdown next to the source
+        ./md2docx.sh memo.md memo.docx         deliver a memo or redlines as .docx
+
+      Reads .docx, .odt, .rtf, .html. Does not read legacy .doc or PDF; ask for
+      a .docx export instead of guessing. Tracked changes in the source survive
+      as insertion/deletion spans and are the counterparty's proposals, not
+      agreed text.

@@ -32,8 +32,10 @@ This repo is the source that Crafting's **Agents → Add Agent** flow reads. It 
 | Agent | What it does | Tools it needs | Inspired by |
 | --- | --- | --- | --- |
 | **Legal Counsel** (`legal-counsel`) | Coordinates a contract or compliance review, fans out to the two specialists below, merges one memo with GREEN / YELLOW / RED flags. | Sub-agents: Contract Analyst, Compliance Reviewer. Optional document store (Box or Microsoft 365 MCP) | Anthropic's [legal plugin](https://github.com/anthropics/knowledge-work-plugins/tree/main/legal) and [claude-for-legal](https://github.com/anthropics/claude-for-legal) |
-| **Contract Analyst** (`contract-analyst`) | Clause-by-clause review against your negotiation playbook. Flags deviations and proposes redline language. | Contract text or file; a playbook file | Anthropic legal plugin, `/review-contract` |
-| **Compliance Reviewer** (`compliance-reviewer`) | Privacy and compliance check (GDPR, CCPA, DPA terms, breach notice, sub-processors) on a contract or initiative. | Contract text or file | Anthropic legal plugin, `/compliance-check` |
+| **Contract Analyst** (`contract-analyst`) | Clause-by-clause review against your negotiation playbook. Flags deviations and proposes redline language, delivered as `.docx` on request. | Contract as `.docx` (or `.odt`, `.rtf`, text); a playbook file. **CLI**: [pandoc](https://github.com/jgm/pandoc), installed automatically in the agent's sandbox | Anthropic legal plugin, `/review-contract` |
+| **Compliance Reviewer** (`compliance-reviewer`) | Privacy and compliance check (GDPR, CCPA, DPA terms, breach notice, sub-processors) on a contract or initiative. | Contract or DPA as `.docx` (or `.odt`, `.rtf`, text). **CLI**: [pandoc](https://github.com/jgm/pandoc), installed automatically | Anthropic legal plugin, `/compliance-check` |
+
+Contracts arrive as Word files, so the two specialists convert them to text before reading and preserve tracked changes as the counterparty's proposals. Legacy `.doc` and PDF are not supported; the agent asks for a `.docx` export instead of guessing.
 
 All legal output is a draft for attorney review. These agents assist with legal workflow; they do not give legal advice.
 

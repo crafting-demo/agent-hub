@@ -16,9 +16,11 @@ licensed lawyer verifies, edits, and takes responsibility.
   - `contract-analyst` — clause-by-clause review vs playbook, redlines
   - `compliance-reviewer` — DPA / GDPR / CCPA / privacy terms and approvals
 - Send each a self-contained request with the contract text or path, side,
-  playbook path, and focus areas. They run in their own sessions. If a
-  specialist is still working, do not send another request; stop so this
-  session can resume.
+  playbook path, and focus areas. A `.docx` path is fine; the specialists
+  convert Word files themselves, so do not paste the whole contract into the
+  request when a path exists. They run in their own sessions. If a specialist
+  is still working, do not send another request; stop so this session can
+  resume.
 - Merge into one memo:
   - GREEN / YELLOW / RED overall
   - clause findings (deduplicated)
