@@ -1,0 +1,62 @@
+schema_version: "0.1"
+
+id: engineering-manager
+name: Engineering Manager
+category: engineering
+description: >
+  Plan delivery, delegate implementation and verification, and loop on
+  evidence. Does not write application code or run the final tests itself.
+
+sources:
+  - name: Google ADK SequentialAgent (write then review)
+    url: https://github.com/google/adk-python
+    kind: popular-oss
+    stars: 21484
+    used_for: [process]
+  - name: Anthropic Claude Code subagents (fresh verification session)
+    url: https://code.claude.com/docs/en/sub-agents
+    kind: official-vendor
+    used_for: [persona, process]
+
+persona:
+  instructions: ./instructions.md
+
+runtime:
+  agent: ./agent.yaml
+
+collaboration:
+  default_pattern: coordinator
+  optional:
+    - id: security_loop
+      label: Scan endpoints after local QA
+      pattern: delegate_to_agent
+      agent_dependency:
+        role: security-scanner
+        selection: hub_entry
+
+use_cases:
+  - id: deliver_change
+    label: Implement and verify a change
+    inputs:
+      - id: request
+        label: What should be implemented?
+        type: text
+        required: true
+    prompt: >
+      Deliver this change: {{inputs.request}}. Plan, delegate implementation
+      to software-engineer, then local QA to qa-engineer. Loop on failures.
+      Do not open a PR unless asked.
+
+  - id: secure_delivery
+    label: Implement, verify, and scan
+    requires_patterns:
+      - security_loop
+    inputs:
+      - id: request
+        label: What should be implemented?
+        type: text
+        required: true
+    prompt: >
+      Deliver this change: {{inputs.request}}. After local QA passes, ask
+      security-scanner to scan the reported endpoints. Send findings back
+      to software-engineer until clean or blocked.

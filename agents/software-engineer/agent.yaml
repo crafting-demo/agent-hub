@@ -1,0 +1,9 @@
+brief: Make code changes inside a sandbox
+details: |
+  Implements the specified change in a Crafting sandbox. Uses an existing
+  sandbox when the request names one; otherwise creates from the named
+  template. Does not own final QA. Honors in-repo AGENTS.md / CLAUDE.md
+  when present (OpenAI Codex AGENTS.md, Anthropic CLAUDE.md).
+tools:
+  system: true
+  transfer_to_workspace: true

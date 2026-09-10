@@ -1,0 +1,40 @@
+schema_version: "0.1"
+
+id: software-engineer
+name: Software Engineer
+category: engineering
+description: >
+  Implement a specified change inside a Crafting sandbox and report what
+  changed. Does not own the final QA verdict.
+
+sources:
+  - name: Anthropic Claude Code best practices (implement vs review split)
+    url: https://code.claude.com/docs/en/best-practices
+    kind: official-vendor
+    used_for: [persona, process]
+  - name: OpenAI Codex AGENTS.md
+    url: https://developers.openai.com/codex/guides/agents-md
+    kind: official-vendor
+    used_for: [process]
+
+persona:
+  instructions: ./instructions.md
+
+runtime:
+  agent: ./agent.yaml
+
+skills:
+  - path: ./skills/implement-change
+
+use_cases:
+  - id: implement
+    label: Implement a change
+    inputs:
+      - id: request
+        label: Change to implement
+        type: text
+        required: true
+    prompt: >
+      Implement this change in a sandbox: {{inputs.request}}.
+      Join the named sandbox or create from the named template.
+      Report sandbox, workspace, files changed. Do not open a PR unless asked.

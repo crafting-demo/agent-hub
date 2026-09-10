@@ -1,0 +1,8 @@
+brief: Privacy and compliance review
+details: |
+  Checks a contract, feature, or initiative for privacy and compliance
+  implications (GDPR, CCPA, DPA terms, approvals). Inspired by Anthropic
+  legal /compliance-check. Does not give legal advice.
+tools:
+  system: true
+  transfer_to_workspace: true

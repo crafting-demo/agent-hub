@@ -1,0 +1,13 @@
+brief: Plan and oversee delivery of an engineering change
+details: |
+  Engineering manager. Reads a request, writes a plan, and delegates to
+  specialists. Does not write code or run tests. Write-then-review sequence
+  from Google ADK SequentialAgent; verification in a fresh specialist session
+  (Anthropic: do not grade your own homework).
+sub_agents:
+  - custom:
+      name: software-engineer
+  - custom:
+      name: qa-engineer
+  - custom:
+      name: security-scanner

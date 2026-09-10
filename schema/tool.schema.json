@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/crafting-demo/agent-hub/schema/tool.schema.json",
+  "title": "Agent Hub CLI tool package",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "label"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "label": { "type": "string" },
+    "description": { "type": "string" },
+    "install": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["checkout_path", "cmd"],
+      "properties": {
+        "checkout_path": { "type": "string" },
+        "cmd": { "type": "string" }
+      }
+    },
+    "wrappers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["dest"],
+        "properties": {
+          "dest": { "type": "string" },
+          "mode": { "type": "string", "pattern": "^[0-7]{3,4}$" },
+          "source": { "type": "string" },
+          "content": { "type": "string" }
+        },
+        "oneOf": [
+          { "required": ["source"] },
+          { "required": ["content"] }
+        ]
+      }
+    }
+  }
+}

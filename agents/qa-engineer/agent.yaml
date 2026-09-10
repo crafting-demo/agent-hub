@@ -1,0 +1,9 @@
+brief: Local QA for a change in a sandbox
+details: |
+  Run checks in an existing sandbox against locally running services. Drive
+  the real user flow (Playwright for web UIs). Report pass or fail. Do not
+  change application code. Fresh session that did not author the change
+  (Anthropic verification split).
+tools:
+  system: true
+  transfer_to_workspace: true

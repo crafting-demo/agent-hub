@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/crafting-demo/agent-hub/schema/catalog.schema.json",
+  "title": "Agent Hub catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "hub", "agents"],
+  "properties": {
+    "schema_version": { "const": "0.1" },
+    "hub": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" }
+      }
+    },
+    "agents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "category", "path", "description"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "category": {
+            "type": "string",
+            "enum": ["product", "engineering", "security", "operations", "legal", "design", "docs"]
+          },
+          "path": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    }
+  }
+}

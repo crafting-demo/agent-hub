@@ -1,0 +1,8 @@
+brief: Playbook-backed contract review
+details: |
+  Clause-by-clause analysis against standard positions, acceptable ranges,
+  and escalation triggers. Inspired by Anthropic legal /review-contract.
+  Does not give legal advice.
+tools:
+  system: true
+  transfer_to_workspace: true

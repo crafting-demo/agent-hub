@@ -1,0 +1,142 @@
+schema_version: "0.1"
+
+id: product-manager
+name: Product Manager
+category: product
+description: >
+  Help plan sprints, organize the backlog, write specs, and clarify tickets
+  against the board the customer already uses.
+
+sources:
+  - name: anthropics/knowledge-work-plugins (product-management)
+    url: https://github.com/anthropics/knowledge-work-plugins/tree/main/product-management
+    kind: official-vendor
+    stars: 23953
+    used_for: [persona, skills, process]
+  - name: Agent Skills specification
+    url: https://agentskills.io/specification
+    kind: standard
+    used_for: [skills]
+
+persona:
+  instructions: ./instructions.md
+
+runtime:
+  agent: ./agent.yaml
+
+skills:
+  - path: ./skills/write-spec
+  - path: ./skills/sprint-planning
+    requires: [ticket_board]
+  - path: ./skills/groom-backlog
+    requires: [ticket_board]
+
+capabilities:
+  ticket_board:
+    label: Ticket board
+    description: Choose where this agent will work with tickets.
+    required: true
+    operations:
+      - read_tickets
+      - search_tickets
+      - update_tickets
+    providers:
+      - id: jira
+        label: Jira
+        kind: mcp
+        connection:
+          ref: jira
+        tool_mapping:
+          read_tickets: jira_get_issue
+          search_tickets: jira_search
+          update_tickets: jira_update_issue
+        configuration:
+          project:
+            label: Project
+            type: string
+            required: true
+            description: Jira project key (for example ENG).
+      - id: linear
+        label: Linear
+        kind: mcp
+        connection:
+          ref: linear
+        tool_mapping:
+          read_tickets: get_issue
+          search_tickets: list_issues
+          update_tickets: update_issue
+        configuration:
+          team:
+            label: Team
+            type: string
+            required: true
+            description: Linear team key or id.
+    verification:
+      - connection_authenticated
+      - selected_context_accessible
+      - required_capabilities_available
+
+collaboration:
+  default_pattern: single_agent
+  optional:
+    - id: engineering_estimation
+      label: Estimate with Engineering Manager
+      pattern: delegate_to_agent
+      agent_dependency:
+        role: engineering-manager
+        selection: existing_agent
+      requires:
+        - ticket_board
+
+use_cases:
+  - id: plan_sprint
+    label: Plan next sprint
+    requires:
+      - ticket_board
+    inputs:
+      - id: sprint_goal
+        label: What should this sprint accomplish?
+        type: text
+        required: true
+    prompt: >
+      Review the configured ticket board and propose a sprint plan
+      for this goal: {{inputs.sprint_goal}}.
+      Explain priorities, dependencies, and missing information.
+
+  - id: groom_backlog
+    label: Groom backlog
+    requires:
+      - ticket_board
+    prompt: >
+      Review the configured backlog. Identify unclear tickets,
+      duplicates, missing acceptance criteria, and prioritization
+      questions. Propose concrete improvements.
+
+  - id: write_spec
+    label: Write a feature spec
+    inputs:
+      - id: problem
+        label: What problem or feature should this spec cover?
+        type: text
+        required: true
+    prompt: >
+      Write a structured feature spec for: {{inputs.problem}}.
+      Include problem, audience, v1 scope, non-goals, success metrics,
+      and open questions. If a ticket board is configured, link related
+      tickets instead of inventing identifiers.
+
+  - id: estimate_ticket
+    label: Estimate a ticket with Engineering Manager
+    requires:
+      - ticket_board
+    requires_patterns:
+      - engineering_estimation
+    inputs:
+      - id: ticket
+        label: Ticket
+        type: text
+        required: true
+    prompt: >
+      Review {{inputs.ticket}} with the configured Engineering
+      Manager agent. Propose an estimate and explain assumptions
+      and unresolved questions.

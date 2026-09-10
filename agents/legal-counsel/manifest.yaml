@@ -1,0 +1,76 @@
+schema_version: "0.1"
+
+id: legal-counsel
+name: Legal Counsel
+category: legal
+description: >
+  Coordinate playbook-backed contract and compliance review. Merges specialist
+  findings into a memo for attorney review. Does not give legal advice.
+
+sources:
+  - name: anthropics/knowledge-work-plugins (legal)
+    url: https://github.com/anthropics/knowledge-work-plugins/tree/main/legal
+    kind: official-vendor
+    stars: 23953
+    used_for: [persona, skills, process]
+  - name: anthropics/claude-for-legal
+    url: https://github.com/anthropics/claude-for-legal
+    kind: official-vendor
+    used_for: [process]
+
+persona:
+  instructions: ./instructions.md
+
+runtime:
+  agent: ./agent.yaml
+
+capabilities:
+  document_store:
+    label: Document store
+    description: Optional. Where contracts and playbooks already live.
+    required: false
+    operations:
+      - read_document
+      - search_documents
+    providers:
+      - id: box
+        label: Box
+        kind: mcp
+        connection:
+          ref: box
+        tool_mapping:
+          read_document: box_read
+          search_documents: box_search
+      - id: sharepoint
+        label: Microsoft 365 / SharePoint
+        kind: mcp
+        connection:
+          ref: microsoft365
+        tool_mapping:
+          read_document: sharepoint_get_file
+          search_documents: sharepoint_search
+    verification:
+      - connection_authenticated
+      - selected_context_accessible
+
+collaboration:
+  default_pattern: coordinator
+
+use_cases:
+  - id: vendor_contract_review
+    label: Review a vendor contract
+    inputs:
+      - id: contract
+        label: Contract (path, paste, or description of where it is)
+        type: text
+        required: true
+      - id: side
+        label: Which side are you on? (customer / vendor)
+        type: string
+        required: true
+    prompt: >
+      Coordinate a review of {{inputs.contract}}. We are the {{inputs.side}}.
+      Fan out to contract-analyst (clause-by-clause vs playbook) and
+      compliance-reviewer (DPA / GDPR / CCPA terms). Merge a single memo
+      with GREEN / YELLOW / RED flags. Every output is a draft for attorney
+      review — do not treat it as legal advice.

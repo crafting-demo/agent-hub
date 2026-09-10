@@ -1,0 +1,38 @@
+schema_version: "0.1"
+
+id: compliance-reviewer
+name: Compliance Reviewer
+category: legal
+description: >
+  Privacy and compliance check on a contract, feature, or initiative
+  (GDPR, CCPA, DPA terms, data-subject handling). Draft for attorney review.
+
+sources:
+  - name: anthropics/knowledge-work-plugins legal (compliance-check)
+    url: https://github.com/anthropics/knowledge-work-plugins/tree/main/legal
+    kind: official-vendor
+    stars: 23953
+    used_for: [persona, skills, process]
+
+persona:
+  instructions: ./instructions.md
+
+runtime:
+  agent: ./agent.yaml
+
+skills:
+  - path: ./skills/compliance-check
+
+use_cases:
+  - id: check_compliance
+    label: Compliance-check an initiative or DPA
+    inputs:
+      - id: subject
+        label: Contract path, feature, or initiative
+        type: text
+        required: true
+    prompt: >
+      Run a compliance check on {{inputs.subject}}. Surface applicable
+      privacy rules (GDPR, CCPA), DPA-style terms, gaps, and approvals
+      needed. Draft for attorney review; verify current law with
+      authoritative sources.

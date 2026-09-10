@@ -1,0 +1,74 @@
+schema_version: "0.1"
+
+id: security-scanner
+name: Security Scanner
+category: security
+description: >
+  Scan a URL for web vulnerabilities with a planted CLI and report findings
+  as feedback for a coding loop. Does not write exploits or patch application
+  code.
+
+sources:
+  - name: Crafting custom-agent guide (webscan CLI-in-template)
+    url: https://docs.sandboxes.cloud/docs/guides/developers/build-agent
+    kind: official-vendor
+    used_for: [persona, tools]
+  - name: OWASP Top 10
+    url: https://owasp.org/www-project-top-ten/
+    kind: standard
+    used_for: [process]
+
+persona:
+  instructions: ./instructions.md
+
+runtime:
+  agent: ./agent.yaml
+
+skills:
+  - path: ./skills/web-scan
+    requires: [web_scanner]
+
+capabilities:
+  web_scanner:
+    label: Web scanner CLI
+    description: HTTP scanner planted in the agent's exec sandbox.
+    required: true
+    kind_hint: cli
+    operations:
+      - scan_url
+    providers:
+      - id: lonkero
+        label: Lonkero
+        kind: cli
+        tool: ./tools/lonkero
+    verification:
+      - cli_executable
+
+use_cases:
+  - id: scan_url
+    label: Scan a URL
+    requires:
+      - web_scanner
+    inputs:
+      - id: url
+        label: URL to scan
+        type: string
+        required: true
+    prompt: >
+      Scan {{inputs.url}} with the planted scanner CLI. Parse the JSON
+      output and report findings by severity. Do not write exploits
+      or change application code.
+
+  - id: rescan_after_fix
+    label: Re-scan after a fix
+    requires:
+      - web_scanner
+    inputs:
+      - id: url
+        label: URL to re-scan
+        type: string
+        required: true
+    prompt: >
+      Re-scan {{inputs.url}}. Compare with the previous finding list if
+      one is in this conversation. Report what cleared, what remains,
+      and what is new.

@@ -1,0 +1,40 @@
+schema_version: "0.1"
+
+id: qa-engineer
+name: QA Engineer
+category: engineering
+description: >
+  Verify a change in an existing sandbox against locally running services.
+  Drive the real user flow. Report pass or fail. Do not patch.
+
+sources:
+  - name: Anthropic Claude Code best practices (fresh-session verification)
+    url: https://code.claude.com/docs/en/best-practices
+    kind: official-vendor
+    used_for: [persona, process]
+  - name: microsoft/playwright
+    url: https://github.com/microsoft/playwright
+    kind: popular-oss
+    stars: 95925
+    used_for: [tools, process]
+
+persona:
+  instructions: ./instructions.md
+
+runtime:
+  agent: ./agent.yaml
+
+skills:
+  - path: ./skills/local-qa
+
+use_cases:
+  - id: verify_local
+    label: Verify a sandbox change locally
+    inputs:
+      - id: sandbox
+        label: Sandbox and what to assert
+        type: text
+        required: true
+    prompt: >
+      Verify locally: {{inputs.sandbox}}. Do not patch. Report pass or fail
+      with evidence at each asserted step.

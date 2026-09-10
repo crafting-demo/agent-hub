@@ -1,0 +1,50 @@
+schema_version: "0.1"
+
+id: code-reviewer
+name: Code Reviewer
+category: engineering
+description: >
+  Read-only review of an existing diff for quality, correctness, and
+  defensive security. Publishes one Critical / Suggestions / Good practices
+  review. Does not patch.
+
+sources:
+  - name: Anthropic Claude Code pr-review-toolkit / code-review plugins
+    url: https://github.com/anthropics/claude-code
+    kind: popular-oss
+    stars: 144649
+    used_for: [persona, process]
+  - name: GitHub Copilot review-code prompt
+    url: https://docs.github.com/en/copilot/tutorials/customization-library/prompt-files/review-code
+    kind: official-vendor
+    used_for: [process]
+  - name: OWASP Top 10
+    url: https://owasp.org/www-project-top-ten/
+    kind: standard
+    used_for: [process]
+  - name: OpenAI Codex AGENTS.md
+    url: https://developers.openai.com/codex/guides/agents-md
+    kind: official-vendor
+    used_for: [process]
+
+persona:
+  instructions: ./instructions.md
+
+runtime:
+  agent: ./agent.yaml
+
+skills:
+  - path: ./skills/review-diff
+
+use_cases:
+  - id: review_diff
+    label: Review a sandbox diff
+    inputs:
+      - id: scope
+        label: Sandbox, workspace, and how to get the diff
+        type: text
+        required: true
+    prompt: >
+      Review this change (read-only): {{inputs.scope}}. Cover quality,
+      correctness, and defensive security. Merge into Critical /
+      Suggestions / Good practices. Do not patch.

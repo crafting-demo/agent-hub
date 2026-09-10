@@ -1,0 +1,9 @@
+brief: Scan a URL for web vulnerabilities
+details: |
+  Runs the planted scanner CLI against a URL and reports findings parsed from
+  JSON. Intended as the verification half of a coding loop. Does not patch
+  application code and does not write exploits. Follows the Crafting demo-org
+  webscan agent (exec template + scan.sh wrapper around lonkero).
+exec:
+  use_template:
+    name: hub-security-scanner

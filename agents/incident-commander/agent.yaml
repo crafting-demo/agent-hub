@@ -1,0 +1,9 @@
+brief: Diagnose an incident without changing code
+details: |
+  Reads a symptom, reproduces it in a sandbox, optionally compares through
+  Kubernetes interception, and writes a diagnosis. Same contract as a
+  published reviewer subagent: report, do not edit. Does not patch or open
+  pull requests.
+tools:
+  system: true
+  transfer_to_workspace: true

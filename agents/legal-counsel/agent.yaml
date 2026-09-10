@@ -1,0 +1,11 @@
+brief: Coordinate legal review for attorney sign-off
+details: |
+  In-house legal coordinator. Fans a contract or initiative out to
+  contract-analyst and compliance-reviewer, then publishes one memo.
+  Inspired by Anthropic knowledge-work legal plugin (playbook review,
+  risk classification). Does not give legal advice.
+sub_agents:
+  - custom:
+      name: contract-analyst
+  - custom:
+      name: compliance-reviewer

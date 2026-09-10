@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/crafting-demo/agent-hub/schema/agent.schema.json",
+  "title": "Compiled Crafting LLMAgent YAML",
+  "description": "Mirrors sandboxes.api.v1.LLMAgent proto fields used by cs llm agent create.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["brief", "instructions"],
+  "properties": {
+    "brief": { "type": "string" },
+    "details": { "type": "string" },
+    "instructions": { "type": "string" },
+    "exec": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "use_template": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name"],
+          "properties": {
+            "name": { "type": "string" },
+            "exec": { "type": "object" }
+          }
+        }
+      }
+    },
+    "mcp_servers": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "use_global_config": { "type": "boolean" },
+        "explicit": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ref": { "type": "string" },
+              "sandbox": { "type": "string" },
+              "external": { "type": "object" }
+            }
+          }
+        }
+      }
+    },
+    "tools": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "system": { "type": "boolean" },
+        "transfer_to_workspace": { "type": "boolean" }
+      }
+    },
+    "visibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "disabled": { "type": "boolean" },
+        "scope": { "type": "string", "enum": ["NORMAL", "SUB_AGENT"] }
+      }
+    },
+    "sub_agents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "custom": {
+            "type": "object",
+            "properties": { "name": { "type": "string" } }
+          },
+          "template": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "agent": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "model": { "type": "string" },
+    "model_mapping": { "type": "object" }
+  }
+}

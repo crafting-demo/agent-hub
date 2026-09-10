@@ -1,0 +1,42 @@
+schema_version: "0.1"
+
+id: incident-commander
+name: Incident Commander
+category: operations
+description: >
+  Diagnose an incident without changing code. Reproduce locally, optionally
+  compare via cluster intercept, and write a diagnosis plus next step.
+
+sources:
+  - name: Anthropic Claude Code security-reviewer / reviewer contract
+    url: https://code.claude.com/docs/en/sub-agents
+    kind: official-vendor
+    used_for: [persona, process]
+  - name: Google ADK SequentialAgent
+    url: https://github.com/google/adk-python
+    kind: popular-oss
+    stars: 21484
+    used_for: [process]
+
+persona:
+  instructions: ./instructions.md
+
+runtime:
+  agent: ./agent.yaml
+
+skills:
+  - path: ./skills/diagnose-incident
+
+use_cases:
+  - id: diagnose
+    label: Diagnose a symptom
+    inputs:
+      - id: symptom
+        label: What is failing?
+        type: text
+        required: true
+    prompt: >
+      Diagnose this incident (do not patch): {{inputs.symptom}}.
+      Reproduce locally from the named template. If the template has an
+      intercept plan, compare on the cluster path. Write what reproduced,
+      where, what you ruled out, sandbox name, and a recommended next step.

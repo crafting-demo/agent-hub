@@ -1,0 +1,66 @@
+schema_version: '0.1'
+hub:
+  id: crafting-demo
+  name: Crafting Agent Hub
+  description: Curated Crafting agents. Capabilities resolve to MCP or CLI at install.
+agents:
+- id: code-reviewer
+  name: Code Reviewer
+  category: engineering
+  path: agents/code-reviewer
+  description: Read-only review of an existing diff for quality, correctness, and defensive
+    security. Publishes one Critical / Suggestions / Good practices review. Does not patch.
+- id: compliance-reviewer
+  name: Compliance Reviewer
+  category: legal
+  path: agents/compliance-reviewer
+  description: Privacy and compliance check on a contract, feature, or initiative (GDPR, CCPA,
+    DPA terms, data-subject handling). Draft for attorney review.
+- id: contract-analyst
+  name: Contract Analyst
+  category: legal
+  path: agents/contract-analyst
+  description: Clause-by-clause review against a negotiation playbook. Flags deviations, suggests
+    redlines, and notes business impact. Draft for attorney review.
+- id: engineering-manager
+  name: Engineering Manager
+  category: engineering
+  path: agents/engineering-manager
+  description: Plan delivery, delegate implementation and verification, and loop on evidence.
+    Does not write application code or run the final tests itself.
+- id: incident-commander
+  name: Incident Commander
+  category: operations
+  path: agents/incident-commander
+  description: Diagnose an incident without changing code. Reproduce locally, optionally compare
+    via cluster intercept, and write a diagnosis plus next step.
+- id: legal-counsel
+  name: Legal Counsel
+  category: legal
+  path: agents/legal-counsel
+  description: Coordinate playbook-backed contract and compliance review. Merges specialist
+    findings into a memo for attorney review. Does not give legal advice.
+- id: product-manager
+  name: Product Manager
+  category: product
+  path: agents/product-manager
+  description: Help plan sprints, organize the backlog, write specs, and clarify tickets against
+    the board the customer already uses.
+- id: qa-engineer
+  name: QA Engineer
+  category: engineering
+  path: agents/qa-engineer
+  description: Verify a change in an existing sandbox against locally running services. Drive
+    the real user flow. Report pass or fail. Do not patch.
+- id: security-scanner
+  name: Security Scanner
+  category: security
+  path: agents/security-scanner
+  description: Scan a URL for web vulnerabilities with a planted CLI and report findings as
+    feedback for a coding loop. Does not write exploits or patch application code.
+- id: software-engineer
+  name: Software Engineer
+  category: engineering
+  path: agents/software-engineer
+  description: Implement a specified change inside a Crafting sandbox and report what changed.
+    Does not own the final QA verdict.

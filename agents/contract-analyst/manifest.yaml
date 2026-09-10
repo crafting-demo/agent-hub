@@ -1,0 +1,37 @@
+schema_version: "0.1"
+
+id: contract-analyst
+name: Contract Analyst
+category: legal
+description: >
+  Clause-by-clause review against a negotiation playbook. Flags deviations,
+  suggests redlines, and notes business impact. Draft for attorney review.
+
+sources:
+  - name: anthropics/knowledge-work-plugins legal (review-contract)
+    url: https://github.com/anthropics/knowledge-work-plugins/tree/main/legal
+    kind: official-vendor
+    stars: 23953
+    used_for: [persona, skills, process]
+
+persona:
+  instructions: ./instructions.md
+
+runtime:
+  agent: ./agent.yaml
+
+skills:
+  - path: ./skills/contract-review
+
+use_cases:
+  - id: review_contract
+    label: Review a contract against a playbook
+    inputs:
+      - id: contract
+        label: Contract text or path
+        type: text
+        required: true
+    prompt: >
+      Review {{inputs.contract}} clause-by-clause against the playbook.
+      GREEN / YELLOW / RED per issue, with redline language for YELLOW and
+      RED. Draft for attorney review — not legal advice.

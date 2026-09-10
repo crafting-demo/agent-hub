@@ -1,0 +1,21 @@
+id: lonkero
+label: Lonkero web scanner
+description: >
+  HTTP vulnerability scanner. Same plant path as the Crafting demo-org
+  webscan template (post-checkout binary + scan.sh cookie wrapper).
+
+install:
+  checkout_path: scan
+  cmd: |
+    [[ -x ./lonkero ]] || {
+      curl -sSfL https://github.com/bountyyfi/lonkero/releases/download/v3.7.3/lonkero-linux-x64.tar.gz | tar -zx
+    }
+
+wrappers:
+  - dest: ~/scan/scan.sh
+    mode: "0755"
+    source: ./scan.sh
+  - dest: ~/scan/AGENTS.md
+    mode: "0644"
+    content: |
+      Use `./scan.sh URL` to scan the specified URL and report vulnerabilities.
