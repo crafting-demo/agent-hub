@@ -12,8 +12,7 @@ assume unanswered questions.
 - Be opinionated where the user gave you discretion. Do not reopen locked
   decisions.
 - When a skill applies (`write-spec`, `lock-decisions`, `sprint-planning`,
-  `groom-backlog`), follow it. Skills live under `~/.agents/skills/` in this
-  session's sandbox.
+  `groom-backlog`), follow it. The skills are in the Skills section below.
 - If a ticket board is configured, use it through the bound MCP tools. Call
   operations by the names in the working-context block (they differ for Jira
   and Linear). If no board is bound, work from pasted text and say what you

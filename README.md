@@ -33,10 +33,12 @@ Twelve agents in four groups. One name, one job: where a role spans two phases o
 
 | Agent | What it does | Tools it needs | Inspired by |
 | --- | --- | --- | --- |
-| **Security Scanner** (`security-scanner`) | Scans a running URL for web vulnerabilities and reports findings by severity, as feedback for a coding loop. No exploits. | **CLI**: [lonkero](https://github.com/bountyyfi/lonkero), installed automatically in the agent's sandbox | Crafting's demo-org `webscan` agent; OWASP Top 10 |
+| **Security Scanner** (`security-scanner`) | Scans a running URL for web vulnerabilities and reports findings by severity, as feedback for a coding loop. No exploits. Comes with its own target, so it works on the first request. | **CLI**: [lonkero](https://github.com/bountyyfi/lonkero), installed automatically in the agent's sandbox, which also runs [OWASP Juice Shop](https://owasp.org/www-project-juice-shop/) in a second workspace | Crafting's demo-org `webscan` agent; OWASP Top 10 |
 | **Incident Commander** (`incident-commander`) | Reproduces a symptom in a sandbox, optionally compares through cluster intercept, writes a diagnosis. Does not fix. | Crafting sandbox, `cs k8s intercept` when a plan exists | Anthropic reviewer contract ("report, do not edit") |
 
 Two agents touch security, and they read different things: `security-scanner` probes a running URL with a CLI, while `code-reviewer` reads a diff and folds security into one review with quality and correctness. Ask Code Reviewer for a security-only review when you want that lens alone.
+
+`security-scanner` is also the catalog's example of an agent that works **alongside other services in its own sandbox**: its template has two workspaces, one for the agent and its CLI and one running the app under test, and the agent reaches the app over the sandbox network at `http://target:3000`. Any package can declare extra workspaces, dependencies, or containers this way — see [Sandbox](SPEC.md#sandbox).
 
 ### Legal
 
@@ -91,8 +93,9 @@ cd agent-hub
 # 1. Compile the package. For agents with a provider choice, pick one.
 python3 scripts/build.py product-manager --provider ticket_board=jira
 
-# 2. If the build produced a sandbox template, create it first.
-cs template create hub-product-manager dist/product-manager/template.yaml
+# 2. Only if the build produced dist/<id>/template.yaml (agents that install a
+#    CLI, such as security-scanner), create the sandbox template first.
+cs template create hub-security-scanner dist/security-scanner/template.yaml
 
 # 3. Create the agent (org-shared). Drop --shared for a personal agent.
 cs llm agent create product-manager --shared dist/product-manager/agent.yaml
@@ -115,10 +118,12 @@ agents/product-manager/
   skills/             Agent Skills (SKILL.md) the agent can draw on.
                       (Agents can also use skills defined inside working repos.)
   tools/              CLI installers and wrappers, where needed.
+  sandbox.yaml        Extra workspaces or services to run beside the agent,
+                      where needed.
   README.md           Human-readable catalog page.
 ```
 
-`scripts/build.py` compiles a package into exactly what Crafting already accepts: an `LLMAgent` YAML for `cs llm agent create`, plus a sandbox template when the agent needs skills or a CLI on disk. There are no new runtime fields. The compiled output is what you would have written by hand, generated from parts that are easier to review and reuse.
+`scripts/build.py` compiles a package into exactly what Crafting already accepts: an `LLMAgent` YAML for `cs llm agent create`, with skills inlined into the instructions. A sandbox template is a last resort, produced only when the agent needs a CLI on disk. There are no new runtime fields. The compiled output is what you would have written by hand, generated from parts that are easier to review and reuse.
 
 The full contract is in [SPEC.md](SPEC.md). `scripts/validate.sh` checks every manifest against the JSON Schema in `schema/` and runs `cs template validate` on generated templates.
 

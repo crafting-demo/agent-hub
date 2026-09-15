@@ -16,7 +16,8 @@ cookie and execs lonkero.
 
 ## Steps
 
-1. Confirm the URL (and any mode flags) from the request.
+1. Confirm the URL (and any mode flags) from the request. With no URL given,
+   use the bundled target in this sandbox: `http://target:3000`.
 2. Run the command. Capture the full JSON.
 3. Summarize findings. Map to OWASP Top 10 / CWE labels when the mapping is
    obvious; otherwise describe the observation without stretching.

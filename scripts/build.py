@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Compile Agent Hub packages into Crafting LLMAgent YAML (+ exec templates)."""
+"""Compile Agent Hub packages into Crafting LLMAgent YAML.
+
+Skills are inlined into the agent's instructions. An exec template is emitted
+only when a selected CLI provider needs files or a binary on disk, or the
+package ships a sandbox fragment of extra workloads to merge in.
+"""
 
 from __future__ import annotations
 
@@ -51,17 +56,64 @@ def read_text(path: Path) -> str:
     return path.read_text().rstrip() + "\n"
 
 
-def skill_name(skill_dir: Path) -> str:
+def parse_skill(skill_dir: Path) -> tuple[str, str, str]:
+    """Return (name, description, body) from a SKILL.md with frontmatter."""
     skill_md = skill_dir / "SKILL.md"
     if not skill_md.exists():
         raise SystemExit(f"missing {skill_md}")
     text = skill_md.read_text()
+    meta: dict = {}
+    body = text
     if text.startswith("---"):
-        _, fm, _body = text.split("---", 2)
+        _, fm, body = text.split("---", 2)
         meta = yaml.safe_load(fm) or {}
-        if meta.get("name"):
-            return str(meta["name"])
-    return skill_dir.name
+    name = str(meta.get("name") or skill_dir.name)
+    description = " ".join(str(meta.get("description") or "").split())
+    return name, description, body.strip()
+
+
+def demote_headings(markdown: str, levels: int) -> str:
+    """Push Markdown headings down so a skill body nests under its section."""
+    out: list[str] = []
+    in_fence = False
+    for line in markdown.splitlines():
+        if line.lstrip().startswith("```"):
+            in_fence = not in_fence
+        elif not in_fence and line.startswith("#"):
+            hashes = len(line) - len(line.lstrip("#"))
+            if line[hashes : hashes + 1] == " ":
+                line = "#" * min(hashes + levels, 6) + line[hashes:]
+        out.append(line)
+    return "\n".join(out)
+
+
+def skills_context(package: Path, manifest: dict) -> str:
+    """Inline every skill so the agent needs no files on disk to use it."""
+    skills = manifest.get("skills") or []
+    if not skills:
+        return ""
+    lines = [
+        "",
+        "",
+        "## Skills",
+        "",
+        "Each skill below is a procedure. When a request matches a skill's",
+        "description, follow that skill. These are part of your instructions;",
+        "do not look for skill files on disk.",
+    ]
+    for skill in skills:
+        skill_dir = (package / skill["path"]).resolve()
+        name, description, body = parse_skill(skill_dir)
+        title = name
+        body_lines = body.splitlines()
+        if body_lines and body_lines[0].startswith("# "):
+            title = f"{body_lines[0][2:].strip()} (`{name}`)"
+            body = "\n".join(body_lines[1:]).strip()
+        lines += ["", f"### {title}", ""]
+        if description:
+            lines += [description, ""]
+        lines.append(demote_headings(body, 2))
+    return "\n".join(lines)
 
 
 def resolve_package(agent_id: str) -> Path:
@@ -107,7 +159,7 @@ def pick_providers(manifest: dict, flags: dict[str, str]) -> dict[str, dict]:
 def working_context(chosen: dict[str, dict]) -> str:
     if not chosen:
         return ""
-    lines = ["", "## Working context", ""]
+    lines = ["", "", "## Working context", ""]
     for cap_id, provider in chosen.items():
         kind = provider["kind"]
         lines.append(f"- Capability `{cap_id}` bound to `{provider['id']}` ({kind}).")
@@ -127,7 +179,6 @@ def working_context(chosen: dict[str, dict]) -> str:
                 )
         if kind == "cli":
             lines.append("  Use the planted CLI wrappers in this sandbox.")
-    lines.append("")
     return "\n".join(lines)
 
 
@@ -150,32 +201,78 @@ def load_tool(package: Path, tool_rel: str) -> tuple[Path, dict]:
     return tool_dir, spec
 
 
+FRAGMENT_KEYS = ("workspaces", "dependencies", "containers", "endpoints", "env")
+WORKLOAD_KEYS = ("workspaces", "dependencies", "containers")
+
+
 def needs_template(manifest: dict, chosen: dict[str, dict]) -> bool:
-    if manifest.get("skills"):
+    """A template is a last resort: files on disk or extra workloads earn one.
+
+    Skills are inlined into instructions, so they never force a template.
+    pick_providers already auto-selects single required providers, so an
+    optional CLI only counts when it was chosen explicitly.
+    """
+    if manifest.get("sandbox"):
         return True
-    for provider in chosen.values():
-        if provider.get("kind") == "cli":
-            return True
-    # CLI providers that were not selected still need a template if they are
-    # the only way to satisfy a required capability — pick_providers already
-    # auto-selects single providers, so this covers optional CLI too if chosen.
-    return False
+    return any(p.get("kind") == "cli" for p in chosen.values())
+
+
+def load_fragment(package: Path, manifest: dict) -> dict:
+    spec = manifest.get("sandbox")
+    if not spec:
+        return {}
+    path = (package / spec["definition"]).resolve()
+    if not path.is_file():
+        raise SystemExit(f"sandbox definition missing: {path}")
+    fragment = load_yaml(path) or {}
+    unknown = sorted(set(fragment) - set(FRAGMENT_KEYS))
+    if unknown:
+        raise SystemExit(
+            f"{path}: unsupported keys {unknown}; allowed {list(FRAGMENT_KEYS)}"
+        )
+    return fragment
+
+
+def merge_workspace(base: dict, extra: dict) -> dict:
+    """Fold a fragment workspace into the generated one of the same name."""
+    merged = dict(base)
+    for key, value in extra.items():
+        if key == "name":
+            continue
+        if key == "checkouts" and key in merged:
+            merged[key] = merged[key] + value
+        elif key == "system" and key in merged:
+            system = dict(merged[key])
+            for sub_key, sub_value in value.items():
+                if isinstance(sub_value, list) and isinstance(system.get(sub_key), list):
+                    system[sub_key] = system[sub_key] + sub_value
+                else:
+                    system[sub_key] = sub_value
+            merged[key] = system
+        else:
+            merged[key] = value
+    return merged
+
+
+def check_workload_names(template: dict, package: Path) -> None:
+    """The runtime requires one namespace across workspaces/deps/containers."""
+    seen: dict[str, str] = {}
+    for kind in WORKLOAD_KEYS:
+        for item in template.get(kind) or []:
+            name = item.get("name")
+            if not name:
+                raise SystemExit(f"{package}: {kind} entry without a name")
+            if name in seen:
+                raise SystemExit(
+                    f"{package}: workload name {name!r} used by both "
+                    f"{seen[name]} and {kind}; names must be unique"
+                )
+            seen[name] = kind
 
 
 def build_template(package: Path, manifest: dict, chosen: dict[str, dict]) -> dict:
     files: list[dict] = []
     checkouts: list[dict] = []
-
-    for skill in manifest.get("skills") or []:
-        skill_dir = (package / skill["path"]).resolve()
-        name = skill_name(skill_dir)
-        files.append(
-            {
-                "path": f"~/.agents/skills/{name}/SKILL.md",
-                "mode": "0644",
-                "content": LiteralStr(read_text(skill_dir / "SKILL.md")),
-            }
-        )
 
     workspace_name = "agent"
     for provider in chosen.values():
@@ -222,7 +319,25 @@ def build_template(package: Path, manifest: dict, chosen: dict[str, dict]) -> di
         workspace["checkouts"] = checkouts
     if files:
         workspace["system"] = {"files": files}
-    return {"workspaces": [workspace]}
+
+    workspaces = [workspace]
+    fragment = load_fragment(package, manifest)
+    for extra in fragment.get("workspaces") or []:
+        name = extra.get("name")
+        if not name:
+            raise SystemExit(f"{package}: sandbox workspace without a name")
+        match = next((i for i, w in enumerate(workspaces) if w["name"] == name), None)
+        if match is None:
+            workspaces.append(extra)
+        else:
+            workspaces[match] = merge_workspace(workspaces[match], extra)
+
+    template: dict[str, Any] = {"workspaces": workspaces}
+    for key in FRAGMENT_KEYS:
+        if key != "workspaces" and fragment.get(key):
+            template[key] = fragment[key]
+    check_workload_names(template, package)
+    return template
 
 
 def compile_agent(agent_id: str, provider_flags: dict[str, str]) -> Path:
@@ -238,7 +353,11 @@ def compile_agent(agent_id: str, provider_flags: dict[str, str]) -> Path:
 
     instructions = read_text(package / manifest["persona"]["instructions"])
     chosen = pick_providers(manifest, provider_flags)
-    instructions = instructions.rstrip() + working_context(chosen)
+    instructions = (
+        instructions.rstrip()
+        + working_context(chosen)
+        + skills_context(package, manifest)
+    )
 
     compiled = dict(runtime)
     compiled["instructions"] = LiteralStr(instructions)
@@ -254,12 +373,21 @@ def compile_agent(agent_id: str, provider_flags: dict[str, str]) -> Path:
         compiled["mcp_servers"] = {"explicit": mcp_refs}
 
     out_dir = DIST / agent_id
+    template_path = out_dir / "template.yaml"
     if needs_template(manifest, chosen):
-        template_name = f"hub-{agent_id}"
-        compiled.setdefault("exec", {})
-        compiled["exec"] = {"use_template": {"name": template_name}}
+        if runtime.get("sub_agents"):
+            raise SystemExit(
+                f"{agent_id}: a coordinator with sub_agents cannot carry a "
+                "template (cli provider or sandbox fragment); template-exec "
+                "agents do not get the sub-agent toolset"
+            )
+        compiled["exec"] = {"use_template": {"name": f"hub-{agent_id}"}}
         template = build_template(package, manifest, chosen)
-        dump_yaml(stringify_leaves(template), out_dir / "template.yaml")
+        dump_yaml(stringify_leaves(template), template_path)
+    elif template_path.exists():
+        # A stale template from an earlier build would make INSTALL.md create
+        # a sandbox template the agent no longer references.
+        template_path.unlink()
 
     dump_yaml(stringify_leaves(compiled), out_dir / "agent.yaml")
     return out_dir

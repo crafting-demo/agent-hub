@@ -1,0 +1,73 @@
+# Extra workloads merged into the compiled hub-security-scanner template.
+#
+# A scanner is only interesting when it has something to scan, so the agent's
+# sandbox also runs OWASP Juice Shop in its own workspace. The agent stays in
+# the `scan` workspace and reaches this one over the sandbox network at
+# http://target:3000.
+#
+# The endpoint keeps Crafting's default auth proxy. This app is deliberately
+# vulnerable and must not be reachable without an org login.
+
+workspaces:
+  - name: target
+    description: OWASP Juice Shop, the deliberately vulnerable app under test.
+    ports:
+      - name: http
+        port: 3000
+        protocol: HTTP/TCP
+    env:
+      - PATH=/usr/local/node/bin:$PATH
+    checkouts:
+      - path: target
+        manifest:
+          overlays:
+            - inline:
+                hooks:
+                  post-checkout:
+                    cmd: |
+                      case "$(uname -m)" in
+                        x86_64) arch=x64 ;;
+                        aarch64) arch=arm64 ;;
+                        *) echo "unsupported architecture: $(uname -m)" >&2; exit 1 ;;
+                      esac
+
+                      # The packaged release pins engines.node to 22, so the
+                      # distro nodejs package is not new enough.
+                      [[ -d /usr/local/node ]] || {
+                        sudo rm -fr /tmp/node
+                        sudo mkdir -p /tmp/node
+                        curl -sSfL "https://nodejs.org/dist/v22.23.2/node-v22.23.2-linux-${arch}.tar.xz" \
+                          | sudo tar -C /tmp/node -xJ --strip-components=1
+                        sudo mv /tmp/node /usr/local/
+                      }
+
+                      # Prebuilt release: ships node_modules and a compiled
+                      # frontend, so there is no npm install or build step.
+                      [[ -f build/app.js ]] || {
+                        curl -sSfL "https://github.com/juice-shop/juice-shop/releases/download/v20.2.0/juice-shop-20.2.0_node22_linux_${arch}.tgz" \
+                          | tar -zx --strip-components=1
+                      }
+                daemons:
+                  juice-shop:
+                    run:
+                      cmd: node build/app.js
+                      env:
+                        - PORT=3000
+    probes:
+      readiness:
+        - name: http
+          http_get:
+            port: 3000
+            path: /rest/admin/application-version
+          interval: 10s
+          initial_delay: 20s
+          initial_negative_threshold: 30
+
+endpoints:
+  - name: target
+    http:
+      routes:
+        - backend:
+            target: target
+            port: http
+          path_prefix: /
