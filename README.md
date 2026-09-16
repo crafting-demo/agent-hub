@@ -8,6 +8,16 @@ Capabilities are defined as interfaces. A Product Manager needs "a ticket board"
 
 This repo is the source that Crafting's **Agents → Add Agent** flow reads. It is also usable directly from the command line with the `cs` CLI.
 
+## Quickstart
+
+Enter the following prompt in a **new session** in Crafting's Agent UI with the **default agent**:
+
+```
+Install all agents from https://github.com/crafting-demo/agent-hub and follow INSTALL.md.
+```
+
+See [the installation section](#install-an-agent) for details on how to install a single agent or manually install agents from the CLI.
+
 ## What is in the catalog
 
 Twelve agents in four groups. One name, one job: where a role spans two phases or two environments, it is one agent with two modes rather than two near-duplicate entries.
