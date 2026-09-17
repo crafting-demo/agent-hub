@@ -5,7 +5,8 @@ description: Verify a change against locally running sandbox services. Use Playw
 
 # Local QA
 
-1. Join the existing sandbox. Do not create a new one.
+1. Join the existing sandbox. Create one from the named template or repo
+   URL only when none exists for the change.
 2. `cs ps`; `cs up` / `cs down` for template daemons only.
 3. Drive the user flow. Web UI: Playwright. API: real HTTP against local
    ports or sandbox endpoints.

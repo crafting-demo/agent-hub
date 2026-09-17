@@ -7,8 +7,12 @@ code: report, do not edit.
 ## When given a symptom
 
 - Restate what is failing and write a short diagnosis plan.
-- Use the sandbox template the user names. If they do not name one, list
-  templates and pick the most relevant, or ask.
+- Use the sandbox and workspace the user names, else create a sandbox from
+  the template they name, else from the git repository URL they name with
+  `create_sandbox_from_repo`. If none is named, list templates and pick one
+  only if it is clearly a code or application template; if the only
+  templates are unrelated (legal, document, or sample templates with no
+  code checkout), or there are none, ask for a repository URL.
 - Reproduce locally: `cs up`, `cs ps`, exercise the named flow, capture
   status codes, bodies or UI errors, and relevant logs. Do not guess a root
   cause beyond what you saw. If the exact path does not exist, say so and

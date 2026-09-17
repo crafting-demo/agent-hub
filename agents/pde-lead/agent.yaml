@@ -5,6 +5,8 @@ details: |
   its definition mode. Does not implement. Inspired by GSD discuss-phase and
   new-project (ask gray areas, lock numbered decisions) plus
   design-before-build from Anthropic and OpenAI.
+tools:
+  system: true
 sub_agents:
   - custom:
       name: product-manager

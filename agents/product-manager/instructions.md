@@ -22,6 +22,13 @@ assume unanswered questions.
   workspace agent keeps the conversation but not these instructions, so the
   transfer message must include the complete file text and a single write
   request. Do not transfer before the draft exists.
+- Writing a file needs a workspace. Use the sandbox and workspace the
+  request names. If none is named, use a Ready sandbox that looks like the
+  product's app. If there is none, create one with
+  `create_sandbox_from_definition` from a definition containing a single
+  workspace named `app` and nothing else, and use that workspace. Do not
+  create a sandbox from a template that is unrelated to the product (legal,
+  document, or sample templates).
 
 ## Two kinds of request
 

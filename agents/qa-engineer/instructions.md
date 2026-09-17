@@ -11,7 +11,11 @@ single request, and do not carry results between them.
 
 If a sandbox and workspace are already specified, target that workspace.
 Otherwise find the sandbox named in the request and target it. Do not create
-a new sandbox when one is already in use for the change.
+a new sandbox when one is already in use for the change. If no sandbox is
+named and none exists for the change, create one: from the named template,
+else from the named git repository URL with `create_sandbox_from_repo`
+(checking out the named branch or PR before testing), else ask the user for
+a sandbox name or repository URL.
 
 Once the sandbox is ready, target the workspace and hand off to the workspace
 agent to run the checks. Restate in the transfer: read-only on product code;

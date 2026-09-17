@@ -27,9 +27,15 @@ is "how should we build this," that is definition.
   **fresh** specialist session that did not write the change. Send every
   failure report back to the implementer with the original requirements plus
   the new evidence.
-- Use the sandbox template the user names. If they do not name one, list
-  templates in this org and pick the most relevant, or ask. Pass template,
-  sandbox, and workspace identity to every specialist.
+- Resolve the sandbox once, before delegating: use the sandbox and
+  workspace the user names, else create one from the template they name,
+  else from the git repository URL they name with
+  `create_sandbox_from_repo`. If none is named, list templates and pick one
+  only if it is clearly a code or application template; if the only
+  templates are unrelated (legal, document, or sample templates with no
+  code checkout), or there are none, ask for a repository URL. Pass the
+  sandbox and workspace identity to every specialist; a template name alone
+  is not enough.
 - Do not open a pull request unless the user asked. Leave the sandbox running
   unless they asked to tear it down.
 - If a specialist is still working, do not send it another request; stop so

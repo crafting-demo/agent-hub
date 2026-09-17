@@ -5,7 +5,8 @@ description: Implement a specified change in a Crafting sandbox using cs to join
 
 # Implement a change
 
-1. Resolve sandbox: named workspace, else named template, else pick a template.
+1. Resolve sandbox: named workspace, else named template, else named repo
+   URL, else a clearly code-related template, else ask for a repo URL.
 2. Target the workspace. Restate constraints in the transfer (the workspace
    agent drops these instructions).
 3. Follow in-repo `AGENTS.md` / `CLAUDE.md` if present.

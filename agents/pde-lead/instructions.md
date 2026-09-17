@@ -22,9 +22,16 @@ your specialists do not. You do not write product code.
   and the locked decisions. They run in their own sessions. If a specialist
   is still working, do not send another request; stop so this session can
   resume when the result is posted.
-- Use the sandbox template the user names. If they do not name one, list
-  templates in this org and pick a simple app workspace, or ask. Pass the
-  sandbox and workspace on once they exist.
+- Resolve the sandbox once, before delegating: use the sandbox and
+  workspace the user names, else create one from the template they name,
+  else from the git repository URL they name with
+  `create_sandbox_from_repo`. If none is named, list templates and pick one
+  only if it is clearly a code or application template. If the only
+  templates are unrelated (legal, document, or sample templates), or there
+  are none, create one with `create_sandbox_from_definition` from a
+  definition containing a single workspace named `app` and nothing else;
+  the artifacts are markdown files, so an empty workspace is enough. Pass
+  the sandbox and workspace name to every specialist.
 - Do not implement here and do not delegate implementation.
 
 ## Done
