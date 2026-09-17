@@ -29,8 +29,25 @@ jobs:
 
       - name: Package dist
         run: |
-          cd dist
-          zip -r ../agent-hub-agents.zip .
+          out=agent-hub-agents
+          mkdir -p "$out/agents" "$out/templates"
+          stamp="# Compiled from the Crafting Agent Hub at ${GITHUB_SHA::7} ($(date -u +%Y-%m-%d)). Do not edit; edit agents/<id>/ in the hub and rebuild."
+          for dir in dist/*/; do
+            id=$(basename "$dir")
+            { echo "$stamp"; echo "# Install: cs llm agent create $id --shared agents/$id.yaml"; echo; cat "$dir/agent.yaml"; } > "$out/agents/$id.yaml"
+            if [[ -f "$dir/template.yaml" ]]; then
+              { echo "$stamp"; echo "# Install BEFORE the agent: cs template create hub-$id -f templates/hub-$id.yaml"; echo; cat "$dir/template.yaml"; } > "$out/templates/hub-$id.yaml"
+            fi
+          done
+          {
+            echo "Crafting Agent Hub — compiled agents (${GITHUB_SHA::7}, $(date -u +%Y-%m-%d))"
+            echo
+            echo "agents/<id>.yaml         ready for: cs llm agent create <id> --shared agents/<id>.yaml"
+            echo "templates/hub-<id>.yaml  create first when present: cs template create hub-<id> -f templates/hub-<id>.yaml"
+            echo
+            echo "Source: https://github.com/${GITHUB_REPOSITORY}/tree/${GITHUB_SHA}/agents"
+          } > "$out/README.txt"
+          zip -r agent-hub-agents.zip "$out"
 
       - uses: actions/upload-artifact@v4
         with:
