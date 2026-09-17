@@ -90,6 +90,23 @@ section: one `###` subsection per skill carrying its description and body
 Skills never force an exec template. A template is a last resort, reserved
 for a `cli` provider that must place a wrapper or binary in the sandbox.
 
+Every emitted template carries:
+
+```yaml
+customizations:
+  - property_set:
+      type: crafting.dev/sandbox/llm
+      properties:
+        authorizedTemplate: excluded
+```
+
+An agent's exec template is its runtime, not something a user should start a
+sandbox from. This hides it from the tools that match templates
+(`list_templates`, `describe_template`, `create_sandbox_from_template`), so no
+agent following [SANDBOX-POLICY.md](SANDBOX-POLICY.md) can pick `hub-<id>` as
+the template for someone's repository. `exec.use_template` resolves the
+template by name and is unaffected.
+
 ### Capabilities
 
 A capability is an abstract need (`ticket_board`, `web_scanner`) that one or more
@@ -310,6 +327,7 @@ wrappers:
    - `system.files` for each wrapper
    - a checkout with `post-checkout` install `cmd` when `install.cmd` is set
    - the `sandbox` fragment merged in (see [Sandbox](#sandbox))
+   - a `customizations` entry excluding it from template matching (see below)
    - set `exec.use_template.name` to `hub-<id>`
    Otherwise remove any stale `dist/<id>/template.yaml`.
 8. Write `dist/<id>/agent.yaml`.

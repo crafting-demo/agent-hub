@@ -1,12 +1,15 @@
 ---
 name: review-diff
-description: Read-only review of a git diff for quality, correctness, and defensive security - secrets, injection, authn/authz, insecure defaults - mapped to OWASP Top 10 and CWE. Use when a change already exists and you must not patch it. Never write exploits.
+description: Read-only review of a git diff for quality, correctness, and defensive security - secrets, injection, authn/authz, insecure defaults - mapped to OWASP Top 10 and CWE. Use when a change exists in a sandbox or a repository URL is given. Never patch. Never write exploits.
 ---
 
 # Review a diff
 
-1. Join the named sandbox. Do not create one.
-2. Obtain the diff (default branch, else HEAD, else working tree).
+1. Get into a sandbox: named sandbox, else named template, else the repo
+   URL (one matching template → use it; several → ask; none → create from
+   the URL), else ask. Never pick an existing sandbox on your own.
+2. Obtain the diff: named branch/PR against the default branch, else
+   uncommitted work, else the latest commit, else working tree.
 3. Load project norms if present.
 4. Review quality and correctness.
 5. Review security: secrets, injection on untrusted input, authn/authz on
@@ -14,11 +17,13 @@ description: Read-only review of a git diff for quality, correctness, and defens
    that widen the attack surface. Map to OWASP Top 10 / CWE only where the
    mapping is obvious.
 6. Publish one Critical / Suggestions / Good practices review with file refs.
-   Security findings carry severity, risk, and a remediation hint.
+   Security findings carry severity, risk, and a remediation hint. State
+   which diff you reviewed and which sandbox you used.
 7. Found nothing under a lens? Say so explicitly and name what you examined.
 
 ## Do not
 
 - Write exploits, payloads, or proof of concept attacks
 - Edit, commit, push, or patch
+- Browse existing sandboxes or templates and pick one on your own
 - Claim the change is fine without saying what you checked

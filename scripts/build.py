@@ -204,6 +204,19 @@ def load_tool(package: Path, tool_rel: str) -> tuple[Path, dict]:
 FRAGMENT_KEYS = ("workspaces", "dependencies", "containers", "endpoints", "env")
 WORKLOAD_KEYS = ("workspaces", "dependencies", "containers")
 
+# An agent's exec template is its runtime, not a template anyone should start a
+# sandbox from. This customization hides it from the tools that match templates
+# (list_templates, describe_template, create_sandbox_from_template) while
+# exec.use_template still resolves it by name.
+EXCLUDE_FROM_TEMPLATE_MATCHING = [
+    {
+        "property_set": {
+            "type": "crafting.dev/sandbox/llm",
+            "properties": {"authorizedTemplate": "excluded"},
+        }
+    }
+]
+
 
 def needs_template(manifest: dict, chosen: dict[str, dict]) -> bool:
     """A template is a last resort: files on disk or extra workloads earn one.
@@ -336,6 +349,7 @@ def build_template(package: Path, manifest: dict, chosen: dict[str, dict]) -> di
     for key in FRAGMENT_KEYS:
         if key != "workspaces" and fragment.get(key):
             template[key] = fragment[key]
+    template["customizations"] = EXCLUDE_FROM_TEMPLATE_MATCHING
     check_workload_names(template, package)
     return template
 

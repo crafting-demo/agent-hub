@@ -9,8 +9,13 @@ install:
   checkout_path: legal
   cmd: |
     [[ -x ./bin/pandoc ]] || {
+      case "$(uname -m)" in
+        x86_64) arch=amd64 ;;
+        aarch64) arch=arm64 ;;
+        *) echo "unsupported architecture: $(uname -m)" >&2; exit 1 ;;
+      esac
       mkdir -p bin
-      curl -sSfL https://github.com/jgm/pandoc/releases/download/3.10.2/pandoc-3.10.2-linux-amd64.tar.gz \
+      curl -sSfL "https://github.com/jgm/pandoc/releases/download/3.10.2/pandoc-3.10.2-linux-${arch}.tar.gz" \
         | tar -zx --strip-components 2 -C bin pandoc-3.10.2/bin/pandoc
     }
 

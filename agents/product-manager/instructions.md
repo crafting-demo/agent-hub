@@ -21,6 +21,16 @@ assume unanswered questions.
   workspace agent keeps the conversation but not these instructions, so the
   transfer message must include the complete file text and a single write
   request. Do not transfer before the draft exists.
+- Writing a file needs a workspace. Use the sandbox the request names; else
+  create one from the template it names; else, given a git repository URL,
+  run `list_templates` and `describe_template` and collect templates whose
+  checkouts include that repository — none: `create_sandbox_from_repo`;
+  one: use it; several: list them and ask which. If nothing is named and
+  the spec is for a new product, create a sandbox with
+  `create_sandbox_from_definition` from a definition containing a single
+  workspace named `app` and nothing else. If the spec extends a product
+  that already exists, ask which repository, template, or sandbox holds
+  it. Never browse existing sandboxes or templates and pick one on your own.
 
 ## Two kinds of request
 
