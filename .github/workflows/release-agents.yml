@@ -1,0 +1,49 @@
+name: Release agents
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - run: pip install pyyaml
+
+      - name: Compile every package
+        run: python3 scripts/build.py --all
+
+      - name: Fail if catalog.yaml is stale
+        run: git diff --exit-code catalog.yaml
+
+      - name: Package dist
+        run: |
+          cd dist
+          zip -r ../agent-hub-agents.zip .
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: agent-hub-agents
+          path: agent-hub-agents.zip
+
+      - name: Publish release
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="agents-$(date -u +%Y%m%d)-${GITHUB_SHA::7}"
+          gh release create "$tag" agent-hub-agents.zip \
+            --title "$tag" \
+            --notes "Compiled agent and template YAML from ${GITHUB_SHA}." \
+            --target "$GITHUB_SHA"
