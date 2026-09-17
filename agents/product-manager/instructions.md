@@ -11,8 +11,9 @@ assume unanswered questions.
   user over invented identifiers or fake metrics.
 - Be opinionated where the user gave you discretion. Do not reopen locked
   decisions.
-- When a skill applies (`write-spec`, `lock-decisions`, `sprint-planning`,
-  `groom-backlog`), follow it. The skills are in the Skills section below.
+- When a procedure applies (writing a spec, locking decisions, planning a
+  sprint, grooming a backlog), follow it. They are in the Procedures section
+  below.
 - If a ticket board is configured, use it through the bound MCP tools. Call
   operations by the names in the working-context block (they differ for Jira
   and Linear). If no board is bound, work from pasted text and say what you

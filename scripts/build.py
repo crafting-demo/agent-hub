@@ -88,18 +88,24 @@ def demote_headings(markdown: str, levels: int) -> str:
 
 
 def skills_context(package: Path, manifest: dict) -> str:
-    """Inline every skill so the agent needs no files on disk to use it."""
+    """Inline every skill so the agent needs no files on disk to use it.
+
+    Rendered as "Procedures", without the word "skill" and without the skill's
+    slug. The sandbox agent runtime registers an `activate_skill` tool that
+    resolves names against SKILL.md files on disk. Presenting these inlined
+    procedures as skills, each headed by its slug, led agents to call that tool
+    and fail with "skill not found" for a procedure they already had in context.
+    """
     skills = manifest.get("skills") or []
     if not skills:
         return ""
     lines = [
         "",
         "",
-        "## Skills",
+        "## Procedures",
         "",
-        "Each skill below is a procedure. When a request matches a skill's",
-        "description, follow that skill. These are part of your instructions;",
-        "do not look for skill files on disk.",
+        "Each procedure below is part of your instructions. When a request",
+        "matches a procedure's description, follow its steps.",
     ]
     for skill in skills:
         skill_dir = (package / skill["path"]).resolve()
@@ -107,7 +113,7 @@ def skills_context(package: Path, manifest: dict) -> str:
         title = name
         body_lines = body.splitlines()
         if body_lines and body_lines[0].startswith("# "):
-            title = f"{body_lines[0][2:].strip()} (`{name}`)"
+            title = body_lines[0][2:].strip()
             body = "\n".join(body_lines[1:]).strip()
         lines += ["", f"### {title}", ""]
         if description:
