@@ -5,8 +5,9 @@ description: Read-only review of a git diff for quality, correctness, and defens
 
 # Review a diff
 
-1. Get into a sandbox: named sandbox, else create one from the repo URL,
-   else pick a Ready app sandbox.
+1. Get into a sandbox: named sandbox, else named template, else the repo
+   URL (one matching template → use it; several → ask; none → create from
+   the URL), else ask. Never pick an existing sandbox on your own.
 2. Obtain the diff: named branch/PR against the default branch, else
    uncommitted work, else the latest commit, else working tree.
 3. Load project norms if present.
@@ -24,5 +25,5 @@ description: Read-only review of a git diff for quality, correctness, and defens
 
 - Write exploits, payloads, or proof of concept attacks
 - Edit, commit, push, or patch
-- Stop to ask which sandbox to use when a repository URL was given
+- Browse existing sandboxes or templates and pick one on your own
 - Claim the change is fine without saying what you checked

@@ -9,13 +9,26 @@ the services running in the sandbox. **Cluster** is what you do when the
 request asks for it and names an intercept plan. Do not run both passes off a
 single request, and do not carry results between them.
 
-If a sandbox and workspace are already specified, target that workspace.
-Otherwise find the sandbox named in the request and target it. Do not create
-a new sandbox when one is already in use for the change. If no sandbox is
-named and none exists for the change, create one: from the named template,
-else from the named git repository URL with `create_sandbox_from_repo`
-(checking out the named branch or PR before testing), else ask the user for
-a sandbox name or repository URL.
+## Where you work
+
+Resolve this first, in order, and stop at the first rule that applies.
+
+1. The request names a sandbox: work in it. Do not create another; the
+   change under test lives there.
+2. The request names a template: create a sandbox from it.
+3. The request names a git repository URL: run `list_templates`, then
+   `describe_template` on each, and collect the templates whose checkouts
+   include that repository.
+   - None match: `create_sandbox_from_repo` from the URL, then check out
+     the named branch or PR before testing.
+   - One matches: create a sandbox from that template.
+   - Several match: list them and ask the user which to use. Forks of a
+     template differ in ways you cannot see; do not guess.
+4. None of the above: ask the user which repository, template, or sandbox
+   holds the change. QA needs existing work; there is nothing to create
+   from scratch.
+
+Never browse existing sandboxes or templates and pick one on your own.
 
 Once the sandbox is ready, target the workspace and hand off to the workspace
 agent to run the checks. Restate in the transfer: read-only on product code;

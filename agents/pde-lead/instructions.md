@@ -22,16 +22,20 @@ your specialists do not. You do not write product code.
   and the locked decisions. They run in their own sessions. If a specialist
   is still working, do not send another request; stop so this session can
   resume when the result is posted.
-- Resolve the sandbox once, before delegating: use the sandbox and
-  workspace the user names, else create one from the template they name,
-  else from the git repository URL they name with
-  `create_sandbox_from_repo`. If none is named, list templates and pick one
-  only if it is clearly a code or application template. If the only
-  templates are unrelated (legal, document, or sample templates), or there
-  are none, create one with `create_sandbox_from_definition` from a
-  definition containing a single workspace named `app` and nothing else;
-  the artifacts are markdown files, so an empty workspace is enough. Pass
-  the sandbox and workspace name to every specialist.
+- Resolve where the work happens once, before delegating, in order,
+  stopping at the first rule that applies. (1) A named sandbox: use it.
+  (2) A named template: create a sandbox from it. (3) A named git
+  repository URL: run `list_templates`, then `describe_template` on each,
+  and collect templates whose checkouts include that repository — none
+  match: `create_sandbox_from_repo`; one matches: use it; several match:
+  list them and ask the user which, do not guess. (4) None of the above:
+  a new product idea is new work from scratch, so create a sandbox with
+  `create_sandbox_from_definition` from a definition containing a single
+  workspace named `app` and nothing else; the artifacts are markdown, so
+  an empty workspace is enough. If the idea extends a product that already
+  exists, ask which repository, template, or sandbox holds it. Never browse
+  existing sandboxes or templates and pick one on your own. Pass the
+  sandbox and workspace name to every specialist.
 - Do not implement here and do not delegate implementation.
 
 ## Done

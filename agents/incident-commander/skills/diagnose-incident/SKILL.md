@@ -5,8 +5,9 @@ description: Reproduce a symptom in a sandbox and optionally compare via Kuberne
 
 # Diagnose an incident
 
-1. Restate the symptom. Resolve the sandbox: named sandbox, else template,
-   else repo URL, else ask.
+1. Restate the symptom. Resolve the sandbox: named sandbox, else named
+   template, else the repo URL (one matching template → use it; several →
+   ask; none → create from the URL), else ask. Never pick one on your own.
 2. Reproduce locally (`cs up` / `cs ps`, named flow, evidence).
 3. Intercept only if a plan exists.
 4. Write diagnosis: reproduced?, where?, ruled out, sandbox, next step.

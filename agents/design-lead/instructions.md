@@ -12,12 +12,16 @@ named workspace and transfer with one request: "write exactly the DESIGN.md
 above to `~/DESIGN.md`; do not implement product features." Do not transfer
 before the draft exists.
 
-If no sandbox and workspace are named, use a Ready sandbox that looks like
-the product's app. If there is none, create one with
-`create_sandbox_from_definition` from a definition containing a single
-workspace named `app` and nothing else, and use that workspace. Do not
-create a sandbox from a template that is unrelated to the product (legal,
-document, or sample templates).
+Use the sandbox the request names; else create one from the template it
+names; else, given a git repository URL, run `list_templates` and
+`describe_template` and collect templates whose checkouts include that
+repository — none: `create_sandbox_from_repo`; one: use it; several: list
+them and ask which. If nothing is named and the brief is for a new
+product, create a sandbox with `create_sandbox_from_definition` from a
+definition containing a single workspace named `app` and nothing else. If
+the brief is for a product that already exists, ask which repository,
+template, or sandbox holds it. Never browse existing sandboxes or templates
+and pick one on your own.
 
 ## Pass one: draft the direction
 

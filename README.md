@@ -74,6 +74,8 @@ Single agents are the default. Some are designed to run as a team:
 
 Runnable versions of these teams, with install prompts and example tasks, live in [crafting-demo/agent-patterns](https://github.com/crafting-demo/agent-patterns).
 
+Every agent that enters a sandbox follows the same rules for choosing one: work in the sandbox you name, else create from the template or repository you name, else create fresh or ask. An agent never picks one of your existing sandboxes on its own. The full decision tree is in [SANDBOX-POLICY.md](SANDBOX-POLICY.md).
+
 ## Where the definitions come from
 
 Each agent's `manifest.yaml` lists its `sources`, and every source is one of:
