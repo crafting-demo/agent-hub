@@ -35,9 +35,8 @@ Confirm against the live server during onboarding verification.
 
 ```sh
 python3 scripts/build.py product-manager --provider ticket_board=jira
-cs template create hub-product-manager dist/product-manager/template.yaml
 cs llm agent create product-manager --shared dist/product-manager/agent.yaml
 ```
 
-Use `ticket_board=linear` for Linear. The template is required because this
-package ships skills.
+Use `ticket_board=linear` for Linear. The skills are compiled into the
+agent's instructions, so no sandbox template is needed.
