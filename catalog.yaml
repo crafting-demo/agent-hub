@@ -74,7 +74,9 @@ agents:
   category: security
   path: agents/security-scanner
   description: Scan a URL for web vulnerabilities with a planted CLI and report findings as
-    feedback for a coding loop. Does not write exploits or patch application code.
+    feedback for a coding loop. Ships with a deliberately vulnerable app in a second workspace,
+    so it has a target the moment it starts. Does not write exploits or patch application
+    code.
 - id: software-engineer
   name: Software Engineer
   category: engineering

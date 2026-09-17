@@ -5,8 +5,9 @@ name: Security Scanner
 category: security
 description: >
   Scan a URL for web vulnerabilities with a planted CLI and report findings
-  as feedback for a coding loop. Does not write exploits or patch application
-  code.
+  as feedback for a coding loop. Ships with a deliberately vulnerable app in
+  a second workspace, so it has a target the moment it starts. Does not write
+  exploits or patch application code.
 
 sources:
   - name: Crafting custom-agent guide (webscan CLI-in-template)
@@ -17,6 +18,10 @@ sources:
     url: https://owasp.org/www-project-top-ten/
     kind: standard
     used_for: [process]
+  - name: OWASP Juice Shop
+    url: https://owasp.org/www-project-juice-shop/
+    kind: official-vendor
+    used_for: [tools]
 
 persona:
   instructions: ./instructions.md
@@ -44,7 +49,19 @@ capabilities:
     verification:
       - cli_executable
 
+sandbox:
+  definition: ./sandbox.yaml
+
 use_cases:
+  - id: scan_target
+    label: Scan the bundled vulnerable app
+    requires:
+      - web_scanner
+    prompt: >
+      Scan the Juice Shop instance running in this sandbox at
+      http://target:3000. Parse the JSON output and report findings by
+      severity. Do not write exploits or change application code.
+
   - id: scan_url
     label: Scan a URL
     requires:

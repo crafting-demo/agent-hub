@@ -15,7 +15,7 @@ Authority bar: official vendor, published standard, or GitHub ≥ 10,000 stars.
 | software-engineer | [Anthropic best practices](https://code.claude.com/docs/en/best-practices); [OpenAI AGENTS.md](https://developers.openai.com/codex/guides/agents-md) |
 | qa-engineer | Anthropic fresh-session verification; [microsoft/playwright](https://github.com/microsoft/playwright) (96k); [Crafting Kubernetes intercept plan](https://docs.sandboxes.cloud/guides/developers/kubernetes-intercept-plan.html) and [Kubernetes dev experience](https://docs.sandboxes.cloud/features/kubernetes-dev-experience.html) for the cluster pass |
 | code-reviewer | [anthropics/claude-code](https://github.com/anthropics/claude-code) (145k) pr-review-toolkit; [GitHub Copilot review-code](https://docs.github.com/en/copilot/tutorials/customization-library/prompt-files/review-code); [Anthropic subagents](https://code.claude.com/docs/en/sub-agents) read-only security-reviewer contract; OWASP Top 10; [CWE](https://cwe.mitre.org/) |
-| security-scanner | Crafting webscan CLI-in-template; OWASP Top 10 |
+| security-scanner | Crafting webscan CLI-in-template; OWASP Top 10; [OWASP Juice Shop](https://owasp.org/www-project-juice-shop/) as the bundled scan target |
 | incident-commander | Anthropic reviewer contract (report, do not edit); Google ADK sequential |
 | legal-counsel | [knowledge-work-plugins legal](https://github.com/anthropics/knowledge-work-plugins/tree/main/legal); [claude-for-legal](https://github.com/anthropics/claude-for-legal) (draft for attorney review) |
 | contract-analyst | same legal plugin, `/review-contract` process; [jgm/pandoc](https://github.com/jgm/pandoc) (46k) as the document-conversion tool |

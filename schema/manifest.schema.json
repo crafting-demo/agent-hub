@@ -64,6 +64,15 @@
         }
       }
     },
+    "sandbox": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["definition"],
+      "properties": {
+        "definition": { "type": "string", "pattern": "^\\./.+\\.ya?ml$" }
+      },
+      "description": "Partial AppDefinition merged into the compiled exec template."
+    },
     "capabilities": {
       "type": "object",
       "additionalProperties": { "$ref": "#/$defs/capability" }

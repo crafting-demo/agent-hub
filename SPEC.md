@@ -11,7 +11,7 @@ Compiled artifacts:
 | Artifact | Crafting command | When |
 | --- | --- | --- |
 | `dist/<id>/agent.yaml` | `cs llm agent create <id> [--shared] FILE` | Always |
-| `dist/<id>/template.yaml` | `cs template create hub-<id> FILE` then `cs template validate FILE` | Package has `skills/` or a `cli` provider |
+| `dist/<id>/template.yaml` | `cs template create hub-<id> FILE` then `cs template validate FILE` | A selected `cli` provider needs files on disk, or the package has a `sandbox` fragment |
 
 `agent.yaml` is an [`LLMAgent`](https://github.com/sandbox-cloud/protos) resource
 (snake_case proto fields). The agent **name** is the CLI argument, not a YAML
@@ -29,6 +29,7 @@ agents/<id>/
   skills/<name>/SKILL.md Optional. Agent Skills format (agentskills.io).
   tools/<name>/tool.yaml Optional. CLI capability package.
   tools/<name>/*         Wrappers and supporting files.
+  sandbox.yaml           Optional. Extra workloads for the exec sandbox.
   README.md              Required. Human catalog page and attribution.
 ```
 
@@ -82,10 +83,12 @@ skills:
 
 Each `path` is a directory containing `SKILL.md` with YAML frontmatter
 `name` and `description` per [agentskills.io](https://agentskills.io/specification).
-At compile time, skills are planted at `~/.agents/skills/<name>/` in the exec
-template. Crafting discovers them from the workspace filesystem.
+At compile time, skills are inlined into `instructions` under a `## Skills`
+section: one `###` subsection per skill carrying its description and body
+(headings demoted so they nest). The agent needs nothing on disk to use them.
 
-If any skill is present, the package **must** produce an exec template.
+Skills never force an exec template. A template is a last resort, reserved
+for a `cli` provider that must place a wrapper or binary in the sandbox.
 
 ### Capabilities
 
@@ -165,6 +168,31 @@ compiler and `cs llm agent create` ignore it.
 | `selected_context_accessible` | Configuration value (project, team) is readable |
 | `required_capabilities_available` | Mapped tools exist on the connected server |
 | `cli_executable` | Wrapper exists and the binary is on PATH or at the planted path |
+
+### Sandbox
+
+```yaml
+sandbox:
+  definition: ./sandbox.yaml
+```
+
+Optional. Extra workloads the agent needs **alongside** it in its exec
+sandbox: a service to test against, a database, a load generator. The file is
+a partial `AppDefinition` with any of `workspaces`, `dependencies`,
+`containers`, `endpoints`, and `env`, so it has the same shape as a template
+and can be linted on its own.
+
+The compiler merges it into the template it already builds for CLI wrappers.
+A fragment workspace whose `name` matches the CLI workspace is merged into
+that workspace (`checkouts` and `system.files` append, other keys are copied);
+any other workspace is added as a sibling. Workload names must be unique
+across `workspaces`, `dependencies`, and `containers` — the runtime requires
+it, and the build fails on a collision.
+
+A fragment forces a template even with no CLI provider, since the workloads
+have to exist somewhere. It is therefore subject to the same limit as `cli`:
+a coordinator that declares `sub_agents` must not carry one (see
+[Compilation](#compilation)).
 
 ### Collaboration
 
@@ -272,22 +300,26 @@ wrappers:
    supplied later by the UI, a `## Working context` section. The CLI build
    records selected provider ids in that section so the agent knows which board
    it has.
-5. For each selected `mcp` provider, append `{ ref: connection.ref }` to
+5. Append a `## Skills` section to `instructions` with every skill in
+   `skills` inlined (see Skills above).
+6. For each selected `mcp` provider, append `{ ref: connection.ref }` to
    `mcp_servers.explicit`.
-6. If the package has skills or any selected/available `cli` provider, emit
+7. If a selected `cli` provider or a `sandbox` fragment is present, emit
    `dist/<id>/template.yaml`:
-   - one workspace (name from the first CLI `checkout_path`, or `agent`)
-   - `system.files` for each `SKILL.md` at `~/.agents/skills/<name>/SKILL.md`
+   - the agent workspace (name from the first CLI `checkout_path`, or `agent`)
    - `system.files` for each wrapper
    - a checkout with `post-checkout` install `cmd` when `install.cmd` is set
+   - the `sandbox` fragment merged in (see [Sandbox](#sandbox))
    - set `exec.use_template.name` to `hub-<id>`
-7. Write `dist/<id>/agent.yaml`.
-8. Refresh `catalog.yaml` from all `agents/*/manifest.yaml`.
+   Otherwise remove any stale `dist/<id>/template.yaml`.
+8. Write `dist/<id>/agent.yaml`.
+9. Refresh `catalog.yaml` from all `agents/*/manifest.yaml`.
 
-Pure-MCP agents with **no** skills stay stateless: no template, no `exec`.
-Coordinators that declare `sub_agents` should stay stateless for the same
-reason: template-exec custom agents do not currently carry the sub-agent
-toolset. Put skills on the specialists, not on the manager.
+Everything without a CLI or a fragment stays stateless: no template, no
+`exec`. That includes agents with skills and pure-MCP agents. Coordinators
+that declare `sub_agents` must stay stateless: template-exec custom agents do
+not currently carry the sub-agent toolset, so a coordinator can never take a
+`cli` provider or a `sandbox` fragment.
 
 ## Catalog protocol
 
