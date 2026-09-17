@@ -72,6 +72,25 @@ sandbox created from their own template (`exec.use_template`) and do not
 choose one. `legal-counsel` coordinates the two legal specialists and does not
 enter a sandbox itself.
 
+## Agent-owned templates are not candidates
+
+The `hub-*` templates those three agents run in are their runtime, not
+templates you would start a sandbox from. Each one is published with:
+
+```yaml
+customizations:
+  - property_set:
+      type: crafting.dev/sandbox/llm
+      properties:
+        authorizedTemplate: excluded
+```
+
+Crafting hides an excluded template from the tools agents use to find
+templates, so rule 3 above will never match `hub-security-scanner` against
+your repository, and no agent can start a sandbox from it. The agent it
+belongs to still launches normally, because `exec.use_template` resolves the
+template by name rather than by matching.
+
 ## Source
 
 The flowchart is generated from this Mermaid definition:
