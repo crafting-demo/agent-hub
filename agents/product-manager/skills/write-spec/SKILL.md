@@ -25,7 +25,7 @@ without re-asking the product questions.
 - **Goals** — observable outcomes, not a feature laundry list
 - **Non-goals** — deferred on purpose
 - **Locked decisions** — `D-01`, `D-02`, … what the user has settled; see the
-  `lock-decisions` skill
+  Lock decisions procedure
 - **Requirements** — user stories with acceptance criteria; label Must / Should / Could
 - **Success metrics** — how we will know it worked
 - **Dependencies and risks**

@@ -83,9 +83,15 @@ skills:
 
 Each `path` is a directory containing `SKILL.md` with YAML frontmatter
 `name` and `description` per [agentskills.io](https://agentskills.io/specification).
-At compile time, skills are inlined into `instructions` under a `## Skills`
-section: one `###` subsection per skill carrying its description and body
-(headings demoted so they nest). The agent needs nothing on disk to use them.
+At compile time, skills are inlined into `instructions` under a `## Procedures`
+section: one `###` subsection per skill, titled with its `SKILL.md` heading and
+carrying its description and body (headings demoted so they nest). The agent
+needs nothing on disk to use them.
+
+The rendered section says "Procedures", not "Skills", and omits the skill slug.
+The sandbox agent runtime registers an `activate_skill` tool that resolves names
+against `SKILL.md` files on disk; presenting inlined procedures as named skills
+led agents to call that tool and fail with "skill not found".
 
 Skills never force an exec template. A template is a last resort, reserved
 for a `cli` provider that must place a wrapper or binary in the sandbox.
@@ -317,7 +323,7 @@ wrappers:
    supplied later by the UI, a `## Working context` section. The CLI build
    records selected provider ids in that section so the agent knows which board
    it has.
-5. Append a `## Skills` section to `instructions` with every skill in
+5. Append a `## Procedures` section to `instructions` with every skill in
    `skills` inlined (see Skills above).
 6. For each selected `mcp` provider, append `{ ref: connection.ref }` to
    `mcp_servers.explicit`.
