@@ -21,11 +21,15 @@ git host, and do not refuse — stand the app up in this sandbox and scan it.
    `mongodb://database:27017`, prefer env vars the app already reads; if
    there is none, add an `/etc/hosts` alias for that hostname. Run any seed
    or migration scripts the README calls for so the app has data to expose.
-4. Install dependencies and start the app on a **free** port. `3000` belongs
-   to the bundled Juice Shop target; pick another (`3100`, `8080`, …).
-   Confirm it answers: `curl -sSf -o /dev/null -w '%{http_code}' http://localhost:PORT/`.
-5. Follow the Web scan procedure against `http://localhost:PORT` (plus any
-   deep paths the request names).
+4. Install dependencies and start the app on a **free** port, bound to all
+   interfaces (not only `127.0.0.1`). `3000` belongs to the bundled Juice
+   Shop target; pick another (`3100`, `8080`, …). Confirm it answers by
+   workspace hostname: `curl -sSf -o /dev/null -w '%{http_code}' http://scan:PORT/`.
+5. Follow the Web scan procedure against `http://scan:PORT` (plus any deep
+   paths the request names). Use the workspace hostname, not `localhost`:
+   the scanner's crawler skips `localhost`, so a localhost scan silently
+   covers only the entry page. Every workspace in the sandbox is reachable by
+   its name, which is why the bundled target is `http://target:3000`.
 6. Report as usual, then add a **Setup** section: repo and commit scanned,
    what you started (ports, containers, hosts aliases, seed scripts), and
    anything you could not bring up. Leave everything running for a re-scan
