@@ -90,8 +90,9 @@ use_cases:
     prompt: >
       Clone {{inputs.repo}} into this sandbox, start the application with the
       backing services it needs on a port other than 3000, and scan it with
-      the planted scanner CLI. Report findings by severity and list what you
-      started. Do not write exploits or change application code.
+      the planted scanner CLI at http://scan:PORT (not localhost). Report
+      findings by severity and list what you started. Do not write exploits
+      or change application code.
 
   - id: rescan_after_fix
     label: Re-scan after a fix
