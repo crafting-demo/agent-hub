@@ -40,6 +40,22 @@ The scanner binary is [lonkero](https://github.com/bountyyfi/lonkero) v3.7.3,
 the same release the demo-org template already pins. It is a tool dependency,
 not a persona source.
 
+Upstream's `linux-arm64` build of that release links OpenSSL 1.1, which the
+Debian 12+ workspace image no longer ships (the x64 build links OpenSSL 3 and
+is fine). On arm64 the install hook vendors `libssl.so.1.1` and
+`libcrypto.so.1.1` from the Debian bullseye pool into `~/scan/lib`, and
+`scan.sh` puts that directory on `LD_LIBRARY_PATH`. The hook ends with
+`lonkero --version`, so a broken plant fails the checkout instead of
+surfacing as exit 127 at scan time.
+
+## Scanning a repository
+
+The scanner is black-box DAST and needs a running app. When a request names
+a git repository instead of a URL, the `scan-repo` procedure has the agent clone
+it into the `scan` workspace, start it (with its databases and so on) on a
+port other than 3000, and scan `http://localhost:PORT`. It runs the app; it
+does not edit it.
+
 ## Capabilities
 
 | Capability | Required | Providers |

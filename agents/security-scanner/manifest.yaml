@@ -32,6 +32,8 @@ runtime:
 skills:
   - path: ./skills/web-scan
     requires: [web_scanner]
+  - path: ./skills/scan-repo
+    requires: [web_scanner]
 
 capabilities:
   web_scanner:
@@ -75,6 +77,21 @@ use_cases:
       Scan {{inputs.url}} with the planted scanner CLI. Parse the JSON
       output and report findings by severity. Do not write exploits
       or change application code.
+
+  - id: scan_repo
+    label: Scan an application from its repository
+    requires:
+      - web_scanner
+    inputs:
+      - id: repo
+        label: Git repository URL
+        type: string
+        required: true
+    prompt: >
+      Clone {{inputs.repo}} into this sandbox, start the application with the
+      backing services it needs on a port other than 3000, and scan it with
+      the planted scanner CLI. Report findings by severity and list what you
+      started. Do not write exploits or change application code.
 
   - id: rescan_after_fix
     label: Re-scan after a fix

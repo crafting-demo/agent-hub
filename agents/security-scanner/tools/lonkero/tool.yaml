@@ -16,6 +16,29 @@ install:
       curl -sSfL "https://github.com/bountyyfi/lonkero/releases/download/v3.7.3/lonkero-linux-${arch}.tar.gz" | tar -zx
     }
 
+    # Upstream's arm64 build links OpenSSL 1.1, which Debian 12+ no longer
+    # ships, so the binary fails to load (exit 127). Vendor libssl.so.1.1 and
+    # libcrypto.so.1.1 next to it; scan.sh adds ./lib to LD_LIBRARY_PATH.
+    # Skipped when the loader already resolves every dependency (x64 links
+    # OpenSSL 3, which the workspace has).
+    if ldd ./lonkero 2>/dev/null | grep -q 'libssl\.so\.1\.1 => not found'; then
+      [[ -f ./lib/libssl.so.1.1 && -f ./lib/libcrypto.so.1.1 ]] || {
+        deb_arch="$(dpkg --print-architecture)"
+        rm -fr /tmp/libssl11 && mkdir -p /tmp/libssl11 ./lib
+        for url in \
+          "https://deb.debian.org/debian/pool/main/o/openssl/libssl1.1_1.1.1w-0+deb11u1_${deb_arch}.deb" \
+          "http://ports.ubuntu.com/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.24_${deb_arch}.deb"; do
+          curl -sSfL -o /tmp/libssl11/libssl1.1.deb "$url" && break
+        done
+        [[ -f /tmp/libssl11/libssl1.1.deb ]] || { echo "could not download libssl1.1 for ${deb_arch}" >&2; exit 1; }
+        dpkg-deb -x /tmp/libssl11/libssl1.1.deb /tmp/libssl11/root
+        cp /tmp/libssl11/root/usr/lib/*/libssl.so.1.1 /tmp/libssl11/root/usr/lib/*/libcrypto.so.1.1 ./lib/
+        rm -fr /tmp/libssl11
+      }
+    fi
+
+    LD_LIBRARY_PATH="$PWD/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" ./lonkero --version
+
 wrappers:
   - dest: ~/scan/scan.sh
     mode: "0755"
