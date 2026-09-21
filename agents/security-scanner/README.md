@@ -53,8 +53,9 @@ surfacing as exit 127 at scan time.
 The scanner is black-box DAST and needs a running app. When a request names
 a git repository instead of a URL, the `scan-repo` procedure has the agent clone
 it into the `scan` workspace, start it (with its databases and so on) on a
-port other than 3000, and scan `http://localhost:PORT`. It runs the app; it
-does not edit it.
+port other than 3000, and scan `http://scan:PORT`. The workspace hostname
+matters: lonkero's crawler skips `localhost`, so a localhost scan covers only
+the entry page. It runs the app; it does not edit it.
 
 ## Capabilities
 
