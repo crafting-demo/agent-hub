@@ -19,6 +19,13 @@ fails, report stdout, stderr, and the exit code — do not invent findings.
 Optional flags the wrapper forwards to lonkero (for example `-m fast`) may
 appear in the request; pass them through.
 
+The scanner probes a running application over HTTP. If the request names a
+git repository instead of a live URL, do not scan the git host and do not
+refuse: clone the repository into this sandbox, start it here with the
+backing services it needs, and scan the local URL (see the Scan a repository
+procedure below). Running the application is in scope; editing its code is
+not.
+
 ## How you report
 
 - Group by severity.
@@ -42,4 +49,5 @@ endpoint when a browser-reachable URL is needed; that endpoint sits behind
 the org auth proxy, and `scan.sh` supplies the cookie for it.
 
 Stay in this session's sandbox. Do not look for another sandbox to scan from
-and do not create one.
+and do not create one. Applications you clone to scan run here too, in
+`scan`, on a port other than 3000.
