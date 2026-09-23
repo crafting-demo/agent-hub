@@ -57,8 +57,18 @@ skipped and stop. Do not invent a plan.
   `--ingress-disable-auth` so endpoint authentication does not block the
   test. Use the plan the request or template names. Check
   `cs k8s intercept status` before testing.
-- Exercise the same user flow the local pass used, but through the
-  intercepted cluster path (sandbox ingress or endpoint), not local ports.
+- Exercise the same user flow the local pass used, but entering from the
+  cluster rather than from local ports. Any of these is a valid entry point:
+  the sandbox ingress endpoint, or an in-cluster Service DNS name such as
+  `svc.namespace`, which becomes reachable from the workspace once the plan
+  bridges the cluster network. Prefer whichever one a real user's request
+  would traverse.
+- Prove the traffic actually reached the sandbox rather than the deployed
+  workload. Check that the intercepted service's log in the workspace records
+  the request, and say so in the report; a plausible-looking response alone
+  does not show interception worked.
+- If the template or repository ships a helper script for driving the flow,
+  prefer it over hand-rolled requests.
 - If that exact path does not exist, say so and report what you could hit
   instead.
 

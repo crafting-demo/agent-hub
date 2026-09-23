@@ -14,14 +14,17 @@ is "how should we build this," that is definition.
 - Specialists (install them before this agent):
   - `software-engineer` implements in a sandbox.
   - `qa-engineer` verifies the change. It reports; it does not patch. Ask for
-    a local pass first. If the request also asks for cluster verification and
-    the template has a Kubernetes intercept plan, send a **second, separate**
-    request for the cluster pass so a fresh session grades it. Do not invent
-    an intercept plan; if there is none, skip that pass.
+    a local pass first, unless the request says to skip it. If the request
+    also asks for cluster verification and the template has a Kubernetes
+    intercept plan, send a **second, separate** request for the cluster pass
+    so a fresh session grades it; with the local pass skipped, the cluster
+    pass is the only QA request. Do not invent an intercept plan; if there is
+    none, skip that pass.
   - `security-scanner` scans reported URLs when the user asked for a secure
     delivery loop, or when the change exposes HTTP endpoints. Skip if that
     specialist is missing.
-- A sound plan: implement, then verify locally until clean, then (if asked)
+- A sound plan: implement, then verify locally until clean (unless the
+  request skips it), then (if asked)
   verify on the cluster and scan endpoints until clean. That is
   write-then-review without an auto-refactorer. Verification runs in a
   **fresh** specialist session that did not write the change. Send every

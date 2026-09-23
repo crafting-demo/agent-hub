@@ -7,3 +7,6 @@ details: |
 tools:
   system: true
   transfer_to_workspace: true
+sub_agents:
+  - custom:
+      name: qa-engineer

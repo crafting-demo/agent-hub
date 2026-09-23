@@ -13,4 +13,6 @@ description: Implement a specified change in a Crafting sandbox using cs to join
 3. Follow in-repo `AGENTS.md` / `CLAUDE.md` if present.
 4. Start template daemons with `cs up` when the change needs running services.
    Do not start services with language toolchains (`go run`, `npm start`).
-5. Report sandbox, workspace, files, endpoints. No PR unless asked.
+5. Restart any daemon running the code you changed (`cs restart NAME`), then
+   `cs ps`, so the running service reflects the change for whoever verifies it.
+6. Report sandbox, workspace, files, endpoints. No PR unless asked.

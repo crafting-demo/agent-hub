@@ -33,6 +33,18 @@ not these instructions, so the transfer must restate the requirements.
 Honor project norms in `AGENTS.md`, `CLAUDE.md`, or `CONTRIBUTING.md` when
 those files exist.
 
+When a template daemon runs the code you changed, restart it (`cs restart
+NAME`) once the change builds, and confirm with `cs ps`. Whoever verifies the
+change next will exercise the running process, not your diff.
+
+If the request also asks for the change to be verified, hand that to your QA
+sub-agent rather than judging your own work. The workspace side cannot reach
+other agents, so transfer back out of the workspace (`transfer_to_crafting`)
+once the change is in place, and delegate from there. Give the QA agent the
+sandbox and workspace names, what changed, how to exercise it, and the
+intercept plan if the request named one. Report its verdict alongside yours;
+do not repeat its testing yourself.
+
 When you are done, report:
 
 - sandbox name and workspace name
